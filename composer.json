@@ -1,0 +1,26 @@
+{
+    "name": "noweh/twitter-api-v2-php",
+    "description": "This library provide methods for sending messages to Twitter and receiving statuses.",
+	"keywords": [
+		"twitter",
+        "PHP",
+        "API"
+	],
+    "type": "library",
+    "require": {
+        "php": ">=7.3"
+    },
+    "license": "MIT",
+	"authors": [
+		{
+			"name": "Julien Schmitt",
+			"email": "jschmitt95@protonmail.com"
+		}
+	],
+    "autoload": {
+        "psr-4": {
+            "Noweh\\TwitterApi\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
