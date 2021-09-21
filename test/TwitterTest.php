@@ -1,25 +1,50 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+namespace Noweh\TwitterApi\Test;
 
+use PHPUnit\Framework\TestCase;
+use Dotenv\Dotenv;
 use Noweh\TwitterApi\TwitterSearch;
 
-$apiBearerToken = 'XXX';
+class TwitterTest extends TestCase
+{
+    /**
+     * @throws \Exception
+     */
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    {
+        try {
+            $dotenv = Dotenv::createImmutable(__DIR__ . '/config', '.env');
+            $dotenv->load();
+        } catch (\Exception $e) {
+            throw new \Exception('test/config/.env file does not exists', '403');
+        }
 
-$twitterReturns = (new TwitterSearch($apiBearerToken))
-    ->showMetrics()
-    ->onlyWithMedias()
-    ->addFilterOnUsernamesFrom([
-        'twitterdev',
-        'Noweh95'
-    ], TwitterSearch::OPERATORS['OR'])
-    ->addFilterOnKeywordOrPhrase([
-        'Dune',
-        'DenisVilleneuve'
-    ], TwitterSearch::OPERATORS['AND'])
-    ->addFilterOnLocales(['fr', 'en'])
-    ->showUserDetails()
-    ->performRequest()
-;
+        parent::__construct($name, $data, $dataName);
+    }
 
-print_r($twitterReturns);
+    /**
+     * Case 1: Search on Twitter
+     * @throws \JsonException
+     */
+    public function testSearchOnTwitter()
+    {
+        $twitterReturns = (new TwitterSearch($_ENV['TWITTER_API_BEARER_TOKEN']))
+            ->showMetrics()
+            ->onlyWithMedias()
+            ->addFilterOnUsernamesFrom([
+                'twitterdev',
+                'Noweh95'
+            ], TwitterSearch::OPERATORS['OR'])
+            ->addFilterOnKeywordOrPhrase([
+                'Dune',
+                'DenisVilleneuve'
+            ], TwitterSearch::OPERATORS['AND'])
+            ->addFilterOnLocales(['fr', 'en'])
+            ->showUserDetails()
+            ->performRequest()
+        ;
+
+        $this->assertIsObject($twitterReturns);
+    }
+}
