@@ -1,2 +1,10 @@
 /vendor
 /composer.lock
+/test/config/.env
+# Others #
+######################
+.idea/
+.project/
+.bundle/
+*.retry
+.vscode/
