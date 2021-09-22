@@ -31,17 +31,26 @@ abstract class AbstractController
 
     /**
      * Perform the request to Twitter API
+     * @param string $method
+     * @param null $postData
      * @return \stdClass
      * @throws \JsonException
      * @throws Exception
      */
-    public function performRequest(): \stdClass
+    public function performRequest(string $method = 'GET', $postData = null): \stdClass
     {
         $ch = curl_init(self::API_URL . $this->constructEndpoint());
         $authorization = "Authorization: Bearer " . $this->bearer;
         // Inject the token into the header
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json' , $authorization]);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        if ($postData) {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData, JSON_THROW_ON_ERROR));
+        }
+
         $responseBody = json_decode(curl_exec($ch), false, 512, JSON_THROW_ON_ERROR); // Execute the cURL statement
         $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 

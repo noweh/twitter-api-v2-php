@@ -2,7 +2,7 @@
 
 namespace Noweh\TwitterApi;
 
-class TwitterSearch extends AbstractController
+class TweetSearch extends AbstractController
 {
     public const OPERATORS = [
         'OR' => 'OR',
@@ -39,6 +39,10 @@ class TwitterSearch extends AbstractController
     /** @var bool $hasMedias */
     private $hasMedias = false;
 
+    /**
+     * @param string $bearer
+     * @throws \Exception
+     */
     public function __construct(string $bearer)
     {
         parent::__construct($bearer);
@@ -50,9 +54,9 @@ class TwitterSearch extends AbstractController
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
      * @param array $usernames
      * @param string|null $operator
-     * @return TwitterSearch
+     * @return TweetSearch
      */
-    public function addFilterOnUsernamesFrom(array $usernames, string $operator = null): TwitterSearch
+    public function addFilterOnUsernamesFrom(array $usernames, string $operator = null): TweetSearch
     {
         $this->filteredUsernamesFrom = $usernames;
         if (in_array($operator, self::OPERATORS, true)) {
@@ -67,9 +71,9 @@ class TwitterSearch extends AbstractController
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
      * @param array $usernames
      * @param string|null $operator
-     * @return TwitterSearch
+     * @return TweetSearch
      */
-    public function addFilterOnUsernamesTo(array $usernames, string $operator = null): TwitterSearch
+    public function addFilterOnUsernamesTo(array $usernames, string $operator = null): TweetSearch
     {
         $this->filteredUsernamesTo = $usernames;
         if (in_array($operator, self::OPERATORS, true)) {
@@ -83,9 +87,9 @@ class TwitterSearch extends AbstractController
      * Matches the exact phrase or a hashtag within the body of a Tweet.
      * @param array $keywords
      * @param string|null $operator
-     * @return TwitterSearch
+     * @return TweetSearch
      */
-    public function addFilterOnKeywordOrPhrase(array $keywords, string $operator = null): TwitterSearch
+    public function addFilterOnKeywordOrPhrase(array $keywords, string $operator = null): TweetSearch
     {
         $this->filteredKeywords = $keywords;
         if (in_array($operator, self::OPERATORS, true)) {
@@ -101,9 +105,9 @@ class TwitterSearch extends AbstractController
      * It is important to note that each Tweet is currently only classified as being of one language,
      * so AND’ing together multiple languages will yield no results.
      * @param array $locales
-     * @return TwitterSearch
+     * @return TweetSearch
      */
-    public function addFilterOnLocales(array $locales): TwitterSearch
+    public function addFilterOnLocales(array $locales): TweetSearch
     {
         $this->filteredLocales = $locales;
         return $this;
@@ -111,9 +115,9 @@ class TwitterSearch extends AbstractController
 
     /**
      * Show Metrics in response
-     * @return TwitterSearch
+     * @return TweetSearch
      */
-    public function showMetrics(): TwitterSearch
+    public function showMetrics(): TweetSearch
     {
         $this->addMetrics = true;
         return $this;
@@ -121,9 +125,9 @@ class TwitterSearch extends AbstractController
 
     /**
      * Show UserDetails in response
-     * @return TwitterSearch
+     * @return TweetSearch
      */
-    public function showUserDetails(): TwitterSearch
+    public function showUserDetails(): TweetSearch
     {
         $this->addUserDetails = true;
         return $this;
@@ -132,9 +136,9 @@ class TwitterSearch extends AbstractController
     /**
      * Matches Tweets that contain a media object, such as a photo, GIF, or video, as determined by Twitter.
      * This will not match on media created with Periscope, or Tweets with links to other media hosting sites.
-     * @return $this
+     * @return TweetSearch
      */
-    public function onlyWithMedias(): TwitterSearch
+    public function onlyWithMedias(): TweetSearch
     {
         $this->hasMedias = true;
         return $this;

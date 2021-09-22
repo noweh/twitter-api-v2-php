@@ -1,5 +1,6 @@
 # Twitter API V2 for PHP
 
+![php](https://img.shields.io/badge/PHP-v7.3-828cb7.svg?style=flat-square)
 [![Badge Twitter](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](licence.md)
 
@@ -21,25 +22,41 @@ In first, you need to follow [this tutorial](https://developer.twitter.com/en/do
 - Enable read/write access for your Twitter app;
 - Grab your access Bearer Token from the twitter developer site.
 
-### To search in Twitter
-    use Noweh\TwitterApi\TwitterSearch;
+### To search specific tweets
+    use Noweh\TwitterApi\TweetSearch;
 
 Example:
 
     $apiBearerToken = '...'; // Previously retrieved from Twitter app
 
-    $twitterReturns = (new TwitterSearch($apiBearerToken))
+    $return = (new TweetSearch($apiBearerToken))
         ->showMetrics()
         ->onlyWithMedias()
         ->addFilterOnUsernamesFrom([
             'twitterdev',
             'Noweh95'
-        ], TwitterSearch::OPERATORS['OR'])
+        ], TweetSearch::OPERATORS['OR'])
         ->addFilterOnKeywordOrPhrase([
             'Dune',
             'DenisVilleneuve'
-        ], TwitterSearch::OPERATORS['AND'])
+        ], TweetSearch::OPERATORS['AND'])
         ->addFilterOnLocales(['fr', 'en'])
         ->showUserDetails()
+        ->performRequest()
+    ;
+
+### To find Twitter Users
+    use use Noweh\TwitterApi\UserSearch;
+
+`findByIdOrUsername()` expects either an array, or a string.
+
+You can specify the search mode as a second parameter (`UserSearch::MODES['USERNAME']` OR `UserSearch::MODES['ID']`)
+
+Example:
+
+    $apiBearerToken = '...'; // Previously retrieved from Twitter app
+
+    $return = (new UserSearch($apiBearerToken))
+        ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
         ->performRequest()
     ;

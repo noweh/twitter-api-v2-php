@@ -4,7 +4,8 @@ namespace Noweh\TwitterApi\Test;
 
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
-use Noweh\TwitterApi\TwitterSearch;
+use Noweh\TwitterApi\TweetSearch;
+use Noweh\TwitterApi\UserSearch;
 
 class TwitterTest extends TestCase
 {
@@ -24,27 +25,44 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Case 1: Search on Twitter
+     * Case 1: Search a Tweet
      * @throws \JsonException
+     * @throws \Exception
      */
-    public function testSearchOnTwitter()
+    public function testSearchTweetsOnTwitter(): void
     {
-        $twitterReturns = (new TwitterSearch($_ENV['TWITTER_API_BEARER_TOKEN']))
+        $this->assertIsObject($this->searchWithParameters());
+    }
+
+    /**
+     * Case 2: Search an User
+     * @throws \JsonException
+     * @throws \Exception
+     */
+    public function testSearchUsersOnTwitter(): void
+    {
+        $authenticatedUser = (new UserSearch($_ENV['TWITTER_API_BEARER_TOKEN']))
+            ->findByIdOrUsername($_ENV['TWITTER_ID'])
+            ->performRequest()
+        ;
+
+        $this->assertIsObject($authenticatedUser);
+    }
+
+    /**
+     * Return a list of tweets with users details
+     * @throws \JsonException
+     * @throws \Exception
+     */
+    private function searchWithParameters(): \stdClass
+    {
+        return (new TweetSearch($_ENV['TWITTER_API_BEARER_TOKEN']))
             ->showMetrics()
             ->onlyWithMedias()
-            ->addFilterOnUsernamesFrom([
-                'twitterdev',
-                'Noweh95'
-            ], TwitterSearch::OPERATORS['OR'])
-            ->addFilterOnKeywordOrPhrase([
-                'Dune',
-                'DenisVilleneuve'
-            ], TwitterSearch::OPERATORS['AND'])
+            ->addFilterOnUsernamesFrom(['twitterdev'], TweetSearch::OPERATORS['OR'])
             ->addFilterOnLocales(['fr', 'en'])
             ->showUserDetails()
             ->performRequest()
         ;
-
-        $this->assertIsObject($twitterReturns);
     }
 }
