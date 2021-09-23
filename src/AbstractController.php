@@ -145,7 +145,7 @@ abstract class AbstractController
             $return = 'Authorization: Bearer ' . $this->bearer_token;
         } else {
             // Use Oauth1.0a to inject into the header
-            $return = 'Authorization: Oauth ';
+            $return = 'Authorization: OAuth ';
 
             $values = [];
             foreach ($this->buildOauth($method, $postData) as $key => $value) {
@@ -169,8 +169,6 @@ abstract class AbstractController
      */
     private function buildOauth($method, $postData = null): array
     {
-        ksort($postData);
-
         $oauth = array(
             'oauth_consumer_key' => $this->consumer_key,
             'oauth_nonce' => time(),
@@ -186,6 +184,8 @@ abstract class AbstractController
             }
         }
 
+        ksort($oauth);
+
         $rawData = [];
         foreach ($oauth as $key => $value) {
             $rawData[] = rawurlencode($key) . '=' . rawurlencode($value);
@@ -194,7 +194,7 @@ abstract class AbstractController
         $oauthSignature = base64_encode(
             hash_hmac(
                 'sha1',
-                $method . '&' . rawurlencode(self::API_URL . $this->constructEndpoint() . '&' . rawurlencode(implode('&', $rawData))),
+                $method . '&' . rawurlencode(self::API_URL . $this->constructEndpoint()) . '&' . rawurlencode(implode('&', $rawData)),
                 rawurlencode($this->consumer_secret) . '&' . rawurlencode($this->access_token_secret),
                 true
             )
