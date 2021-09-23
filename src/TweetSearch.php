@@ -40,12 +40,12 @@ class TweetSearch extends AbstractController
     private $hasMedias = false;
 
     /**
-     * @param string $bearer
+     * @param array $settings
      * @throws \Exception
      */
-    public function __construct(string $bearer)
+    public function __construct(array $settings)
     {
-        parent::__construct($bearer);
+        parent::__construct($settings);
         $this->setEndpoint('/tweets/search/recent');
     }
 

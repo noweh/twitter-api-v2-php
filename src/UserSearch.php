@@ -16,12 +16,12 @@ class UserSearch extends AbstractController
     private $mode = self::MODES['USERNAME'];
 
     /**
-     * @param string $bearer
+     * @param array $settings
      * @throws \Exception
      */
-    public function __construct(string $bearer)
+    public function __construct(array $settings)
     {
-        parent::__construct($bearer);
+        parent::__construct($settings);
         $this->setEndpoint('/users');
     }
 

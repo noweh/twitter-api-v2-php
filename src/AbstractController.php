@@ -9,24 +9,60 @@ abstract class AbstractController
     /** @const string API_URL */
     private const API_URL = 'https://api.twitter.com/2';
 
-    /** @var string $bearer */
-    private $bearer;
+    /**
+     * @var string
+     */
+    private $access_token;
+
+    /**
+     * @var string
+     */
+    private $access_token_secret;
+
+    /**
+     * @var string
+     */
+    private $consumer_key;
+
+    /**
+     * @var string
+     */
+    private $consumer_secret;
+
+    /**
+     * @var string
+     */
+    private $bearer_token;
 
     /** @var string $endpoint */
     private $endpoint;
 
     /**
-     * Creates object using bearer.
-     * @param string $bearer
+     * Creates object. Requires an array of settings.
+     * @param array $settings
      * @throws Exception when CURL extension is not loaded
      */
-    public function __construct(string $bearer)
+    public function __construct(array $settings)
     {
         if (!extension_loaded('curl')) {
             throw new Exception('PHP extension CURL is not loaded.');
         }
 
-        $this->bearer = $bearer;
+        if (!isset(
+            $settings['access_token'],
+            $settings['access_token_secret'],
+            $settings['consumer_key'],
+            $settings['consumer_secret'],
+            $settings['bearer_token']
+        )) {
+            throw new Exception('Incomplete settings passed.');
+        }
+
+        $this->access_token = $settings['access_token'];
+        $this->access_token_secret = $settings['access_token_secret'];
+        $this->consumer_key = $settings['consumer_key'];
+        $this->consumer_secret = $settings['consumer_secret'];
+        $this->bearer_token = $settings['bearer_token'];
     }
 
     /**
@@ -40,9 +76,13 @@ abstract class AbstractController
     public function performRequest(string $method = 'GET', $postData = null): \stdClass
     {
         $ch = curl_init(self::API_URL . $this->constructEndpoint());
-        $authorization = "Authorization: Bearer " . $this->bearer;
-        // Inject the token into the header
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json' , $authorization]);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            $this->buildAuthorizationHeader($method, $postData),
+            'Expect:'
+        ]);
+
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
@@ -90,5 +130,78 @@ abstract class AbstractController
     protected function constructEndpoint(): string
     {
         return $this->endpoint;
+    }
+
+    /**
+     * Generate authorization header (Bearer or Oauth) string
+     * @param $method
+     * @param null $postData
+     * @return string
+     */
+    private function buildAuthorizationHeader($method, $postData = null): string
+    {
+        if ($method === 'GET') {
+            // Inject the Bearer token into the header
+            $return = 'Authorization: Bearer ' . $this->bearer_token;
+        } else {
+            // Use Oauth1.0a to inject into the header
+            $return = 'Authorization: Oauth ';
+
+            $values = [];
+            foreach ($this->buildOauth($method, $postData) as $key => $value) {
+                if (in_array($key, array('oauth_consumer_key', 'oauth_nonce', 'oauth_signature',
+                    'oauth_signature_method', 'oauth_timestamp', 'oauth_token', 'oauth_version'))) {
+                    $values[] = "$key=\"" . rawurlencode($value) . "\"";
+                }
+            }
+
+            $return .= implode(', ', $values);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Build Oauth data
+     * @param $method
+     * @param null $postData
+     * @return array
+     */
+    private function buildOauth($method, $postData = null): array
+    {
+        ksort($postData);
+
+        $oauth = array(
+            'oauth_consumer_key' => $this->consumer_key,
+            'oauth_nonce' => time(),
+            'oauth_signature_method' => 'HMAC-SHA1',
+            'oauth_token' => $this->access_token,
+            'oauth_timestamp' => time(),
+            'oauth_version' => '1.0'
+        );
+
+        if ($postData) {
+            foreach ($postData as $key => $value) {
+                $oauth[$key] = $value;
+            }
+        }
+
+        $rawData = [];
+        foreach ($oauth as $key => $value) {
+            $rawData[] = rawurlencode($key) . '=' . rawurlencode($value);
+        }
+
+        $oauthSignature = base64_encode(
+            hash_hmac(
+                'sha1',
+                $method . '&' . rawurlencode(self::API_URL . $this->constructEndpoint() . '&' . rawurlencode(implode('&', $rawData))),
+                rawurlencode($this->consumer_secret) . '&' . rawurlencode($this->access_token_secret),
+                true
+            )
+        );
+
+        $oauth['oauth_signature'] = $oauthSignature;
+
+        return $oauth;
     }
 }

@@ -20,16 +20,26 @@ In first, you need to follow [this tutorial](https://developer.twitter.com/en/do
 - [Request an approved account](https://developer.twitter.com/en/apply-for-access);
 - Once you have an approved developer account, you will need to first [create a Project](https://developer.twitter.com/en/docs/projects/overview);
 - Enable read/write access for your Twitter app;
-- Grab your access Bearer Token from the twitter developer site.
+- Generate Consumer Keys and Authentication Tokens;
+- Grab your Keys and Tokens from the twitter developer site.
+
+### Prepare settings
+Settings are expected in this form:
+
+    $settings['access_token'],
+    $settings['access_token_secret'],
+    $settings['consumer_key'],
+    $settings['consumer_secret'],
+    $settings['bearer_token']
 
 ### To search specific tweets
     use Noweh\TwitterApi\TweetSearch;
 
 Example:
 
-    $apiBearerToken = '...'; // Previously retrieved from Twitter app
+    $settings = ['...', '...']; // Previously retrieved from Twitter app
 
-    $return = (new TweetSearch($apiBearerToken))
+    $return = (new TweetSearch($settings))
         ->showMetrics()
         ->onlyWithMedias()
         ->addFilterOnUsernamesFrom([
@@ -46,7 +56,7 @@ Example:
     ;
 
 ### To find Twitter Users
-    use use Noweh\TwitterApi\UserSearch;
+    use Noweh\TwitterApi\UserSearch;
 
 `findByIdOrUsername()` expects either an array, or a string.
 
@@ -54,9 +64,23 @@ You can specify the search mode as a second parameter (`UserSearch::MODES['USERN
 
 Example:
 
-    $apiBearerToken = '...'; // Previously retrieved from Twitter app
+    $settings = ['...', '...']; // Previously retrieved from Twitter app
 
-    $return = (new UserSearch($apiBearerToken))
+    $return = (new UserSearch($settings))
         ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
         ->performRequest()
     ;
+
+### To Retweet
+    use Noweh\TwitterApi\Retweet;
+
+You have to add your account ID in settings for Oauth1.0a
+    
+    $settings['account_id']
+
+Example:
+    
+    $settings = ['...', '...']; // Previously retrieved from Twitter app
+
+    $retweeter = new Retweet($this->settings);
+    $return = $retweeter->performRequest('POST', ['tweet_id' => $tweet->id]);

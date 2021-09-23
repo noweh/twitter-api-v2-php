@@ -2,6 +2,7 @@
 
 namespace Noweh\TwitterApi\Test;
 
+use Noweh\TwitterApi\Retweet;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
 use Noweh\TwitterApi\TweetSearch;
@@ -9,19 +10,21 @@ use Noweh\TwitterApi\UserSearch;
 
 class TwitterTest extends TestCase
 {
-    /**
-     * @throws \Exception
-     */
-    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    /** @var array $settings */
+    private $settings = [];
+
+    public function setUp(): void
     {
         try {
-            $dotenv = Dotenv::createImmutable(__DIR__ . '/config', '.env');
+            $dotenv = Dotenv::createImmutable(__DIR__.'/config', '.env');
             $dotenv->load();
         } catch (\Exception $e) {
             throw new \Exception('test/config/.env file does not exists', '403');
         }
 
-        parent::__construct($name, $data, $dataName);
+        foreach ($_ENV as $settingKey => $settingValue) {
+            $this->settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
+        }
     }
 
     /**
@@ -41,12 +44,30 @@ class TwitterTest extends TestCase
      */
     public function testSearchUsersOnTwitter(): void
     {
-        $authenticatedUser = (new UserSearch($_ENV['TWITTER_API_BEARER_TOKEN']))
-            ->findByIdOrUsername($_ENV['TWITTER_ID'])
+        $this->assertIsObject(
+            (new UserSearch($this->settings))
+            ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
             ->performRequest()
-        ;
+        );
+    }
 
-        $this->assertIsObject($authenticatedUser);
+    /**
+     * Case 3: Retweet a Tweet
+     * @throws \JsonException
+     */
+    public function testRetweetOnTwitter(): void
+    {
+        $retweeter = new Retweet($this->settings);
+
+        $searchResult = $this->searchWithParameters();
+        $this->assertObjectHasAttribute('data', $searchResult);
+
+        if (property_exists($searchResult, 'data')) {
+            foreach ($searchResult->data as $tweet) {
+                $return = $retweeter->performRequest('POST', ['tweet_id' => $tweet->id]);
+                $this->assertIsObject($return);
+            }
+        }
     }
 
     /**
@@ -56,10 +77,10 @@ class TwitterTest extends TestCase
      */
     private function searchWithParameters(): \stdClass
     {
-        return (new TweetSearch($_ENV['TWITTER_API_BEARER_TOKEN']))
+        return (new TweetSearch($this->settings))
             ->showMetrics()
             ->onlyWithMedias()
-            ->addFilterOnUsernamesFrom(['twitterdev'], TweetSearch::OPERATORS['OR'])
+            ->addFilterOnKeywordOrPhrase(['twitter'])
             ->addFilterOnLocales(['fr', 'en'])
             ->showUserDetails()
             ->performRequest()
