@@ -22,7 +22,7 @@ class UserSearch extends AbstractController
     public function __construct(array $settings)
     {
         parent::__construct($settings);
-        $this->setEndpoint('/users');
+        $this->setEndpoint('users');
     }
 
     /**

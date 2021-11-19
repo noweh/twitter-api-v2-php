@@ -4,7 +4,7 @@ namespace Noweh\TwitterApi;
 
 use Exception;
 
-class Retweet extends AbstractController
+class Tweet extends AbstractController
 {
     /**
      * @param array $settings
@@ -18,6 +18,6 @@ class Retweet extends AbstractController
             throw new Exception('Incomplete settings passed. Expected "account_id"');
         }
 
-        $this->setEndpoint('users/' . $settings['account_id'] . '/retweets');
+        $this->setEndpoint('tweets');
     }
 }

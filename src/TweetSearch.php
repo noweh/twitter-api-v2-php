@@ -39,6 +39,9 @@ class TweetSearch extends AbstractController
     /** @var bool $hasMedias */
     private $hasMedias = false;
 
+    /** @var int $maxResults */
+    private $maxResults = null;
+
     /**
      * @param array $settings
      * @throws \Exception
@@ -46,7 +49,7 @@ class TweetSearch extends AbstractController
     public function __construct(array $settings)
     {
         parent::__construct($settings);
-        $this->setEndpoint('/tweets/search/recent');
+        $this->setEndpoint('tweets/search/recent');
     }
 
     /**
@@ -110,6 +113,19 @@ class TweetSearch extends AbstractController
     public function addFilterOnLocales(array $locales): TweetSearch
     {
         $this->filteredLocales = $locales;
+        return $this;
+    }
+
+    /**
+     * The maximum number of search results to be returned by a request.
+     * A number between 10 and 100.
+     * By default, a request response will return 10 results.
+     * @param int $number
+     * @return $this
+     */
+    public function addMaxResults(int $number): TweetSearch
+    {
+        $this->maxResults = $number;
         return $this;
     }
 
@@ -198,6 +214,10 @@ class TweetSearch extends AbstractController
 
         if ($this->hasMedias) {
             $endpoint .= '%20has:media';
+        }
+
+        if ($this->maxResults) {
+            $endpoint .= '&max_results=' . $this->maxResults;
         }
 
         if ($this->addMetrics) {

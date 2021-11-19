@@ -6,6 +6,7 @@
 
 Twitter API V2 is a PHP package which provides an easy and fast access to Twitter REST API for Version 2 endpoints.
 
+
 ## Installation
 First, you need to add the component to your composer.json
 ```
@@ -71,6 +72,20 @@ Example:
         ->performRequest()
     ;
 
+### To Post a new Tweet
+    use Noweh\TwitterApi\Tweet;
+
+You have to add your account ID in settings for Oauth1.0a
+
+    $settings['account_id']
+
+Example:
+
+    $settings = ['...', '...']; // Previously retrieved from Twitter app
+
+    $tweet = new Tweet($this->settings);
+    $return = $tweet->performRequest('POST', ['text' => 'This is a test....']);
+
 ### To Retweet
     use Noweh\TwitterApi\Retweet;
 
@@ -84,3 +99,14 @@ Example:
 
     $retweeter = new Retweet($this->settings);
     $return = $retweeter->performRequest('POST', ['tweet_id' => $tweet->id]);
+
+## Contributing
+Fork/download the code and run
+
+`composer install`
+
+copy `.env.example` to `.env` and add your credentials for testing.
+
+To run tests
+
+`./vendor/bin/phpunit`

@@ -3,11 +3,16 @@
 namespace Noweh\TwitterApi;
 
 use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Subscriber\Oauth\Oauth1;
+use GuzzleHttp\HandlerStack;
 
 abstract class AbstractController
 {
     /** @const string API_URL */
-    private const API_URL = 'https://api.twitter.com/2';
+    private const API_BASE_URI = 'https://api.twitter.com/2/';
 
     /**
      * @var string
@@ -34,7 +39,9 @@ abstract class AbstractController
      */
     private $bearer_token;
 
-    /** @var string $endpoint */
+    /**
+     * @var string $endpoint
+     */
     private $endpoint;
 
     /**
@@ -53,7 +60,8 @@ abstract class AbstractController
             $settings['access_token_secret'],
             $settings['consumer_key'],
             $settings['consumer_secret'],
-            $settings['bearer_token']
+            $settings['bearer_token'],
+            $settings['callback_url']
         )) {
             throw new Exception('Incomplete settings passed.');
         }
@@ -63,54 +71,71 @@ abstract class AbstractController
         $this->consumer_key = $settings['consumer_key'];
         $this->consumer_secret = $settings['consumer_secret'];
         $this->bearer_token = $settings['bearer_token'];
+        $this->callback_url = $settings['callback_url'];
     }
 
     /**
      * Perform the request to Twitter API
      * @param string $method
-     * @param null $postData
+     * @param array $postData
      * @return \stdClass
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
      * @throws Exception
      */
-    public function performRequest(string $method = 'GET', $postData = null): \stdClass
+    public function performRequest(string $method = 'GET', array $postData =  []): \stdClass
     {
-        $ch = curl_init(self::API_URL . $this->constructEndpoint());
+        try {
+            $headers = [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ];
+            if ($method === 'GET') {
+                // Inject the Bearer token into the header for the call
+                $client = new Client(['base_uri' => self::API_BASE_URI]);
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            $this->buildAuthorizationHeader($method, $postData),
-            'Expect:'
-        ]);
+                $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
+            } else {
+                // Inject Oauth handler
+                $stack = HandlerStack::create();
+                $middleware = new Oauth1([
+                    'consumer_key' => $this->consumer_key,
+                    'consumer_secret' => $this->consumer_secret,
+                    'token' => $this->access_token,
+                    'token_secret' => $this->access_token_secret,
+                ]);
+                $stack->push($middleware);
 
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        if ($postData) {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData, JSON_THROW_ON_ERROR));
-        }
-
-        $responseBody = json_decode(curl_exec($ch), false, 512, JSON_THROW_ON_ERROR); // Execute the cURL statement
-        $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        if ($responseCode >= 400) {
-            $error = new \stdClass();
-            $error->message = 'cURL error';
-            if ($responseBody) {
-                $error->details = $responseBody;
-            } elseif ($errno = curl_errno($ch)) {
-                $error->details = '(' . $errno . '): ' . curl_strerror($errno);
+                $client = new Client([
+                    'base_uri' => self::API_BASE_URI,
+                    'handler' => $stack,
+                    'auth' => 'oauth'
+                ]);
             }
-            curl_close($ch); // Close the cURL connection
-            throw new Exception(
-                json_encode($error, JSON_THROW_ON_ERROR),
-                $responseCode
-            );
-        }
-        curl_close($ch);
 
-        return $responseBody;
+            $response  = $client->request($method, $this->constructEndpoint(), [
+                'headers' => $headers,
+                'json'    => $postData ?: null
+            ]);
+
+            $body = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
+
+            if ($response->getStatusCode() >= 400) {
+                $error = new \stdClass();
+                $error->message = 'cURL error';
+                if ($body) {
+                    $error->details = $response;
+                }
+                throw new Exception(
+                    json_encode($error, JSON_THROW_ON_ERROR),
+                    $response->getStatusCode()
+                );
+            }
+
+            return $body;
+        } catch (ClientException | ServerException $e) {
+            throw new Exception(json_encode($e->getResponse()->getBody()->getContents(), JSON_THROW_ON_ERROR));
+        }
     }
 
     /**
@@ -130,78 +155,5 @@ abstract class AbstractController
     protected function constructEndpoint(): string
     {
         return $this->endpoint;
-    }
-
-    /**
-     * Generate authorization header (Bearer or Oauth) string
-     * @param $method
-     * @param null $postData
-     * @return string
-     */
-    private function buildAuthorizationHeader($method, $postData = null): string
-    {
-        if ($method === 'GET') {
-            // Inject the Bearer token into the header
-            $return = 'Authorization: Bearer ' . $this->bearer_token;
-        } else {
-            // Use Oauth1.0a to inject into the header
-            $return = 'Authorization: OAuth ';
-
-            $values = [];
-            foreach ($this->buildOauth($method, $postData) as $key => $value) {
-                if (in_array($key, array('oauth_consumer_key', 'oauth_nonce', 'oauth_signature',
-                    'oauth_signature_method', 'oauth_timestamp', 'oauth_token', 'oauth_version'))) {
-                    $values[] = "$key=\"" . rawurlencode($value) . "\"";
-                }
-            }
-
-            $return .= implode(', ', $values);
-        }
-
-        return $return;
-    }
-
-    /**
-     * Build Oauth data
-     * @param $method
-     * @param null $postData
-     * @return array
-     */
-    private function buildOauth($method, $postData = null): array
-    {
-        $oauth = array(
-            'oauth_consumer_key' => $this->consumer_key,
-            'oauth_nonce' => time(),
-            'oauth_signature_method' => 'HMAC-SHA1',
-            'oauth_token' => $this->access_token,
-            'oauth_timestamp' => time(),
-            'oauth_version' => '1.0'
-        );
-
-        if ($postData) {
-            foreach ($postData as $key => $value) {
-                $oauth[$key] = $value;
-            }
-        }
-
-        ksort($oauth);
-
-        $rawData = [];
-        foreach ($oauth as $key => $value) {
-            $rawData[] = rawurlencode($key) . '=' . rawurlencode($value);
-        }
-
-        $oauthSignature = base64_encode(
-            hash_hmac(
-                'sha1',
-                $method . '&' . rawurlencode(self::API_URL . $this->constructEndpoint()) . '&' . rawurlencode(implode('&', $rawData)),
-                rawurlencode($this->consumer_secret) . '&' . rawurlencode($this->access_token_secret),
-                true
-            )
-        );
-
-        $oauth['oauth_signature'] = $oauthSignature;
-
-        return $oauth;
     }
 }

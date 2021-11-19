@@ -2,9 +2,10 @@
 
 namespace Noweh\TwitterApi\Test;
 
-use Noweh\TwitterApi\Retweet;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
+use Noweh\TwitterApi\Tweet;
+use Noweh\TwitterApi\Retweet;
 use Noweh\TwitterApi\TweetSearch;
 use Noweh\TwitterApi\UserSearch;
 
@@ -13,6 +14,9 @@ class TwitterTest extends TestCase
     /** @var array $settings */
     private $settings = [];
 
+    /**
+     * @throws \Exception
+     */
     public function setUp(): void
     {
         try {
@@ -30,17 +34,17 @@ class TwitterTest extends TestCase
     /**
      * Case 1: Search a Tweet
      * @throws \JsonException
-     * @throws \Exception
+     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
      */
     public function testSearchTweetsOnTwitter(): void
     {
-        $this->assertIsObject($this->searchWithParameters());
+        $this->assertIsObject($this->searchWithParameters(['avengers']));
     }
 
     /**
      * Case 2: Search an User
      * @throws \JsonException
-     * @throws \Exception
+     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
      */
     public function testSearchUsersOnTwitter(): void
     {
@@ -52,38 +56,64 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Case 3: Retweet a Tweet
+     * Case 3: Tweet
+     * @throws \JsonException
+     */
+    public function testTweetOnTwitter(): void
+    {
+        $tweet = new Tweet($this->settings);
+
+        $return = $tweet->performRequest('POST', ['text' => 'BIP BIP BIP... This is a test.... ' . mt_rand()]);
+
+        $this->assertIsObject($return);
+    }
+
+    /**
+     * Case 4: Retweet a Tweet
      * @throws \JsonException
      */
     public function testRetweetOnTwitter(): void
     {
         $retweeter = new Retweet($this->settings);
 
-        $searchResult = $this->searchWithParameters();
+        $searchResult = $this->searchWithParameters(['avengers']);
         $this->assertObjectHasAttribute('data', $searchResult);
 
         if (property_exists($searchResult, 'data')) {
-            foreach ($searchResult->data as $tweet) {
-                $return = $retweeter->performRequest('POST', ['tweet_id' => $tweet->id]);
-                $this->assertIsObject($return);
-            }
+            $return = $retweeter->performRequest('POST', ['tweet_id' => $searchResult->data[0]->id]);
+            $this->assertIsObject($return);
         }
     }
 
     /**
      * Return a list of tweets with users details
+     * @param array $keywords
+     * @param array $usernames
+     * @return \stdClass
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
-     * @throws \Exception
      */
-    private function searchWithParameters(): \stdClass
+    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false): \stdClass
     {
-        return (new TweetSearch($this->settings))
+        $request = (new TweetSearch($this->settings))
             ->showMetrics()
-            ->onlyWithMedias()
-            ->addFilterOnKeywordOrPhrase(['twitter'])
             ->addFilterOnLocales(['fr', 'en'])
+            ->addMaxResults(11)
             ->showUserDetails()
-            ->performRequest()
         ;
+
+        if ($onlyWithMedia) {
+            $request->onlyWithMedias();
+        }
+
+        if ($keywords) {
+            $request->addFilterOnKeywordOrPhrase($keywords);
+        }
+
+        if ($usernames) {
+            $request->addFilterOnUsernamesFrom($usernames);
+        }
+
+        return $request->performRequest();
     }
 }
