@@ -8,3 +8,4 @@
 .bundle/
 *.retry
 .vscode/
+.phpunit.result.cache

@@ -16,7 +16,7 @@ class UserSearch extends AbstractController
     private $mode = self::MODES['USERNAME'];
 
     /**
-     * @param array $settings
+     * @param array<int, string> $settings
      * @throws \Exception
      */
     public function __construct(array $settings)
@@ -27,11 +27,11 @@ class UserSearch extends AbstractController
 
     /**
      * returns details about up to 100 users by ID or Username
-     * @param string|array $idOrUsername can be an array of items
+     * @param mixed $idOrUsername can be an array of items
      * @param string $mode
      * @return UserSearch
      */
-    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserSearch
+    public function findByIdOrUsername(mixed $idOrUsername, string $mode = self::MODES['ID']): UserSearch
     {
         $this->idOrUsername = $idOrUsername;
         if (in_array($mode, self::MODES, true)) {
@@ -54,7 +54,7 @@ class UserSearch extends AbstractController
             $error->message = 'cURL error';
             $error->details = 'An id or username is required';
 
-            throw new \Exception(json_encode($error, JSON_THROW_ON_ERROR), '403');
+            throw new \Exception(json_encode($error, JSON_THROW_ON_ERROR), 403);
         }
 
         $endpoint = parent::constructEndpoint();

@@ -11,7 +11,7 @@ use Noweh\TwitterApi\UserSearch;
 
 class TwitterTest extends TestCase
 {
-    /** @var array $settings */
+    /** @var array<string> $settings */
     private $settings = [];
 
     /**
@@ -23,7 +23,7 @@ class TwitterTest extends TestCase
             $dotenv = Dotenv::createImmutable(__DIR__.'/config', '.env');
             $dotenv->load();
         } catch (\Exception $e) {
-            throw new \Exception('test/config/.env file does not exists', '403');
+            throw new \Exception('test/config/.env file does not exists', 403);
         }
 
         foreach ($_ENV as $settingKey => $settingValue) {
@@ -57,7 +57,7 @@ class TwitterTest extends TestCase
 
     /**
      * Case 3: Tweet
-     * @throws \JsonException
+     * @throws \JsonException|\GuzzleHttp\Exception\GuzzleException
      */
     public function testTweetOnTwitter(): void
     {
@@ -70,30 +70,35 @@ class TwitterTest extends TestCase
 
     /**
      * Case 4: Retweet a Tweet
-     * @throws \JsonException
+     * @throws \JsonException|\Exception
      */
     public function testRetweetOnTwitter(): void
     {
         $retweeter = new Retweet($this->settings);
 
         $searchResult = $this->searchWithParameters(['avengers']);
-        $this->assertObjectHasAttribute('data', $searchResult);
+        if (is_object($searchResult)) {
+            $this->assertObjectHasAttribute('data', $searchResult);
 
-        if (property_exists($searchResult, 'data')) {
-            $return = $retweeter->performRequest('POST', ['tweet_id' => $searchResult->data[0]->id]);
-            $this->assertIsObject($return);
+            if (property_exists($searchResult, 'data')) {
+                $return = $retweeter->performRequest('POST', ['tweet_id' => $searchResult->data[0]->id]);
+                $this->assertIsObject($return);
+            }
+        } else {
+            throw new \Exception('error when test', 403);
         }
     }
 
     /**
      * Return a list of tweets with users details
-     * @param array $keywords
-     * @param array $usernames
-     * @return \stdClass
+     * @param array<string> $keywords
+     * @param array<string> $usernames
+     * @param bool $onlyWithMedia
+     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \JsonException
+     * @throws \JsonException|\Exception
      */
-    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false): \stdClass
+    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false)
     {
         $request = (new TweetSearch($this->settings))
             ->showMetrics()

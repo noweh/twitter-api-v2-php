@@ -46,10 +46,10 @@ abstract class AbstractController
 
     /**
      * Creates object. Requires an array of settings.
-     * @param array $settings
+     * @param array<string> $settings
      * @throws Exception when CURL extension is not loaded
      */
-    public function __construct(array $settings)
+    public function __construct(array $settings = [])
     {
         if (!extension_loaded('curl')) {
             throw new Exception('PHP extension CURL is not loaded.');
@@ -60,8 +60,7 @@ abstract class AbstractController
             $settings['access_token_secret'],
             $settings['consumer_key'],
             $settings['consumer_secret'],
-            $settings['bearer_token'],
-            $settings['callback_url']
+            $settings['bearer_token']
         )) {
             throw new Exception('Incomplete settings passed.');
         }
@@ -71,19 +70,18 @@ abstract class AbstractController
         $this->consumer_key = $settings['consumer_key'];
         $this->consumer_secret = $settings['consumer_secret'];
         $this->bearer_token = $settings['bearer_token'];
-        $this->callback_url = $settings['callback_url'];
     }
 
     /**
      * Perform the request to Twitter API
      * @param string $method
-     * @param array $postData
-     * @return \stdClass
+     * @param array<string, string> $postData
+     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
      * @throws Exception
      */
-    public function performRequest(string $method = 'GET', array $postData =  []): \stdClass
+    public function performRequest(string $method = 'GET', array $postData = [])
     {
         try {
             $headers = [

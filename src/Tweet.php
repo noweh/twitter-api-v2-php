@@ -7,7 +7,7 @@ use Exception;
 class Tweet extends AbstractController
 {
     /**
-     * @param array $settings
+     * @param array<string> $settings
      * @throws \Exception
      */
     public function __construct(array $settings)

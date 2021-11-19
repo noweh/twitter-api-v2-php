@@ -9,25 +9,25 @@ class TweetSearch extends AbstractController
         'AND' => ''
     ];
 
-    /** @var array $filteredUsernamesFrom */
+    /** @var array<string> $filteredUsernamesFrom */
     private $filteredUsernamesFrom = [];
 
     /** @var string $operatorOnFilteredUsernamesFrom */
     private $operatorOnFilteredUsernamesFrom = self::OPERATORS['OR'];
 
-        /** @var array $filteredUsernamesTo */
+        /** @var array<string> $filteredUsernamesTo */
     private $filteredUsernamesTo = [];
 
     /** @var string $operatorOnFilteredUsernamesTo */
     private $operatorOnFilteredUsernamesTo = self::OPERATORS['OR'];
 
-    /** @var array $filteredKeywords */
+    /** @var array<string> $filteredKeywords */
     private $filteredKeywords = [];
 
     /** @var string $operatorOnFilteredKeywords */
     private $operatorOnFilteredKeywords = self::OPERATORS['OR'];
 
-    /** @var array $filteredLangs */
+    /** @var array<string> $filteredLocales */
     private $filteredLocales = [];
 
     /** @var bool $addMetrics */
@@ -43,7 +43,7 @@ class TweetSearch extends AbstractController
     private $maxResults = null;
 
     /**
-     * @param array $settings
+     * @param array<string> $settings
      * @throws \Exception
      */
     public function __construct(array $settings)
@@ -55,7 +55,7 @@ class TweetSearch extends AbstractController
     /**
      * Matches any Tweet from a specific user.
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
-     * @param array $usernames
+     * @param array<string> $usernames
      * @param string|null $operator
      * @return TweetSearch
      */
@@ -72,7 +72,7 @@ class TweetSearch extends AbstractController
     /**
      * Matches any Tweet that is in reply to a particular user.
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
-     * @param array $usernames
+     * @param array<string> $usernames
      * @param string|null $operator
      * @return TweetSearch
      */
@@ -88,7 +88,7 @@ class TweetSearch extends AbstractController
 
     /**
      * Matches the exact phrase or a hashtag within the body of a Tweet.
-     * @param array $keywords
+     * @param array<string> $keywords
      * @param string|null $operator
      * @return TweetSearch
      */
@@ -107,7 +107,7 @@ class TweetSearch extends AbstractController
      * (if, and only if, the Tweet has been classified).
      * It is important to note that each Tweet is currently only classified as being of one language,
      * so AND’ing together multiple languages will yield no results.
-     * @param array $locales
+     * @param array<string> $locales
      * @return TweetSearch
      */
     public function addFilterOnLocales(array $locales): TweetSearch
@@ -178,7 +178,7 @@ class TweetSearch extends AbstractController
             $error->message = 'cURL error';
             $error->details = 'A filter on keyword or user is required';
 
-            throw new \Exception(json_encode($error, JSON_THROW_ON_ERROR), '403');
+            throw new \Exception(json_encode($error, JSON_THROW_ON_ERROR), 403);
         }
 
         $endpoint .= '?query=';
