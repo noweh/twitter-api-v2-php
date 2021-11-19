@@ -23,7 +23,8 @@ class TwitterTest extends TestCase
             $dotenv = Dotenv::createImmutable(__DIR__.'/config', '.env');
             $dotenv->load();
         } catch (\Exception $e) {
-            throw new \Exception('test/config/.env file does not exists', 403);
+            // Remove the throw Exception for Github actions tests
+            //throw new \Exception('test/config/.env file does not exists', 403);
         }
 
         foreach ($_ENV as $settingKey => $settingValue) {
