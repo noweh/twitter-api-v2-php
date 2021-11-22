@@ -34,7 +34,7 @@ class TwitterTest extends TestCase
      * @throws \JsonException
      * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
      */
-    public function testSearchTweetsOnTwitter(): void
+    public function testSearchTweets(): void
     {
         $this->assertIsObject($this->searchWithParameters(['avengers']));
     }
@@ -44,7 +44,7 @@ class TwitterTest extends TestCase
      * @throws \JsonException
      * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
      */
-    public function testSearchUsersOnTwitter(): void
+    public function testSearchUsers(): void
     {
         $this->assertIsObject(
             (new UserSearch($this->settings))
@@ -56,12 +56,21 @@ class TwitterTest extends TestCase
     /**
      * Case 3: Tweet
      * @throws \JsonException|\GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
-    public function testTweetOnTwitter(): void
+    public function testTweet(): void
     {
+        $date = new \DateTime('NOW');
+
         $tweet = new Tweet($this->settings);
 
-        $return = $tweet->performRequest('POST', ['text' => 'BIP BIP BIP... This is a test.... ' . mt_rand()]);
+        $return = $tweet->performRequest('POST',
+            [
+                'text' => 'BIP BIP BIP... ' .
+                    $date->format(\DateTimeInterface::ATOM) .
+                    ' A new push on github (https://github.com/noweh/twitter-api-v2-php)....'
+            ]
+        );
 
         $this->assertIsObject($return);
     }
@@ -70,7 +79,7 @@ class TwitterTest extends TestCase
      * Case 4: Retweet a Tweet
      * @throws \JsonException|\Exception
      */
-    public function testRetweetOnTwitter(): void
+    public function testRetweet(): void
     {
         $retweeter = new Retweet($this->settings);
 
