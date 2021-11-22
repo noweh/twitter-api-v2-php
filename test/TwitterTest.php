@@ -66,9 +66,11 @@ class TwitterTest extends TestCase
 
         $return = $tweet->performRequest('POST',
             [
-                'text' => 'BIP BIP BIP... ' .
+                'text' =>
+                    'BIP BIP BIP... ' .
                     $date->format(\DateTimeInterface::ATOM) .
-                    ' A new push on github (https://github.com/noweh/twitter-api-v2-php)....'
+                    ' Avengers Assemble!  A new commit is on github (noweh/twitter-api-v2-php)....'
+
             ]
         );
 
