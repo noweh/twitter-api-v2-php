@@ -31,7 +31,7 @@ class UserSearch extends AbstractController
      * @param string $mode
      * @return UserSearch
      */
-    public function findByIdOrUsername(mixed $idOrUsername, string $mode = self::MODES['ID']): UserSearch
+    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserSearch
     {
         $this->idOrUsername = $idOrUsername;
         if (in_array($mode, self::MODES, true)) {
