@@ -38,9 +38,6 @@ jobs:
       - name: Install dependencies
         run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
 
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1
-
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse .
 

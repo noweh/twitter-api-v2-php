@@ -19,17 +19,13 @@ class TwitterTest extends TestCase
      */
     public function setUp(): void
     {
-        try {
-            $dotenv = Dotenv::createImmutable(__DIR__.'/..', '.env');
-            $dotenv->load();
-        } catch (\Exception $e) {
-            throw new \Exception('.env file does not exists', 403);
-        }
+        $dotenv = Dotenv::createUnsafeImmutable(__DIR__.'/config', '.env');
+        $dotenv->safeLoad();
 
-        var_dump(getenv());
-
-        foreach ($_ENV as $settingKey => $settingValue) {
-            $this->settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
+        foreach (getenv() as $settingKey => $settingValue) {
+            if (strpos($settingKey, 'TWITTER_') === 0) {
+                $this->settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
+            }
         }
     }
 
