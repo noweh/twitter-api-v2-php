@@ -47,7 +47,6 @@ jobs:
           envkey_TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
           envkey_TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
           envkey_TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
-          directory: ./test/config
           file_name: .env
 
       - name: Run PHPStan
