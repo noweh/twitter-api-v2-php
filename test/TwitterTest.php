@@ -26,7 +26,7 @@ class TwitterTest extends TestCase
             throw new \Exception('.env file does not exists', 403);
         }
 
-        var_dump($_SERVER);
+        var_dump(getenv());
 
         foreach ($_ENV as $settingKey => $settingValue) {
             $this->settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
