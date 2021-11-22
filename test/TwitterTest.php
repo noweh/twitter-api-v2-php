@@ -27,7 +27,6 @@ class TwitterTest extends TestCase
         }
 
         var_dump($_SERVER);
-        die();
 
         foreach ($_ENV as $settingKey => $settingValue) {
             $this->settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
