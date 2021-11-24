@@ -108,8 +108,12 @@ Fork/download the code and run
 
 `composer install`
 
-copy `.env.example` to `.env` and add your credentials for testing.
+copy `test/config/.env.example` to `test/config/.env` and add your credentials for testing.
 
-To run tests
+### To run tests
 
 `./vendor/bin/phpunit`
+
+### To run code analyzer
+
+`./vendor/bin/phpstan analyse .`
