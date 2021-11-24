@@ -15,6 +15,12 @@ composer require noweh/twitter-api-v2-php
 ```
 Update your packages with *composer update* or install with *composer install*.
 
+## Github Actions
+
+This repository uses [Github Actions](https://github.com/noweh/twitter-api-v2-php/actions) for each push/pull request with [PHPStan/PHPUnit](/.github/workflows/run-tests.yml).
+
+Therefore, for each valid push, a new Tweet is posted from my [Twitter test account](https://twitter.com/SteveBOTgers/status/1462816862392127491).
+
 ## How to use
 
 ### Active your developer account
@@ -76,10 +82,6 @@ Example:
 ### To Post a new Tweet
     use Noweh\TwitterApi\Tweet;
 
-You have to add your account ID in settings for Oauth1.0a
-
-    $settings['account_id']
-
 Example:
 
     $settings = ['...', '...']; // Previously retrieved from Twitter app
@@ -90,7 +92,7 @@ Example:
 ### To Retweet
     use Noweh\TwitterApi\Retweet;
 
-You have to add your account ID in settings for Oauth1.0a
+You have to add your account ID in settings to Retweet
     
     $settings['account_id']
 
