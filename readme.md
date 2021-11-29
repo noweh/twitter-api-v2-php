@@ -1,6 +1,6 @@
 # Twitter API V2 for PHP
 
-![php](https://img.shields.io/badge/PHP-v7.3-828cb7.svg?style=flat-square)
+![php](https://img.shields.io/badge/PHP-v8.1-828cb7.svg?style=flat-square)
 [![Badge Twitter](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api)
 [![Run Tests](https://github.com/noweh/twitter-api-v2-php/actions/workflows/run-tests.yml/badge.svg)](https://github.com/noweh/twitter-api-v2-php/actions/workflows/run-tests.yml)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](licence.md)
