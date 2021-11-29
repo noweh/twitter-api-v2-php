@@ -7,7 +7,6 @@
 
 Twitter API V2 is a PHP package which provides an easy and fast access to Twitter REST API for Version 2 endpoints.
 
-
 ## Installation
 First, you need to add the component to your composer.json
 ```
@@ -54,11 +53,11 @@ Example:
         ->addFilterOnUsernamesFrom([
             'twitterdev',
             'Noweh95'
-        ], TweetSearch::OPERATORS['OR'])
+        ], \Noweh\TwitterApi\Enum\Operators::or)
         ->addFilterOnKeywordOrPhrase([
             'Dune',
             'DenisVilleneuve'
-        ], TweetSearch::OPERATORS['AND'])
+        ], \Noweh\TwitterApi\Enum\Operators::and)
         ->addFilterOnLocales(['fr', 'en'])
         ->showUserDetails()
         ->performRequest()
@@ -67,14 +66,9 @@ Example:
 ### To find Twitter Users
 `findByIdOrUsername()` expects either an array, or a string.
 
-You can specify the search mode as a second parameter (`Client::MODES['USERNAME']` OR `Client::MODES['ID']`)
+You can specify the search mode as a second parameter:
 
-Example:
-
-    $return = $client->userSearch()
-        ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
-        ->performRequest()
-    ;
+    ->findByIdOrUsername('twitterdev', \Noweh\TwitterApi\Enum\Modes::username) //OR \Noweh\TwitterApi\Enum\Modes::id
 
 ### To Post a new Tweet
 Example:
