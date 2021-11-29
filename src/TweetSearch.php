@@ -2,30 +2,27 @@
 
 namespace Noweh\TwitterApi;
 
+use Noweh\TwitterApi\Enum\Operators;
+
 class TweetSearch extends AbstractController
 {
-    public const OPERATORS = [
-        'OR' => 'OR',
-        'AND' => ''
-    ];
-
     /** @var array<string> $filteredUsernamesFrom */
     private array $filteredUsernamesFrom = [];
 
-    /** @var string $operatorOnFilteredUsernamesFrom */
-    private string $operatorOnFilteredUsernamesFrom = self::OPERATORS['OR'];
+    /** @var Operators $operatorOnFilteredUsernamesFrom */
+    private Operators $operatorOnFilteredUsernamesFrom;
 
         /** @var array<string> $filteredUsernamesTo */
     private array $filteredUsernamesTo = [];
 
-    /** @var string $operatorOnFilteredUsernamesTo */
-    private string $operatorOnFilteredUsernamesTo = self::OPERATORS['OR'];
+    /** @var Operators $operatorOnFilteredUsernamesTo */
+    private Operators $operatorOnFilteredUsernamesTo;
 
     /** @var array<string> $filteredKeywords */
     private array $filteredKeywords = [];
 
-    /** @var string $operatorOnFilteredKeywords */
-    private string $operatorOnFilteredKeywords = self::OPERATORS['OR'];
+    /** @var Operators $operatorOnFilteredKeywords */
+    private Operators $operatorOnFilteredKeywords;
 
     /** @var array<string> $filteredLocales */
     private array $filteredLocales = [];
@@ -56,15 +53,13 @@ class TweetSearch extends AbstractController
      * Matches any Tweet from a specific user.
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
      * @param array<string> $usernames
-     * @param string|null $operator
+     * @param Operators|null $operator
      * @return TweetSearch
      */
-    public function addFilterOnUsernamesFrom(array $usernames, string $operator = null): TweetSearch
+    public function addFilterOnUsernamesFrom(array $usernames, Operators $operator = null): TweetSearch
     {
         $this->filteredUsernamesFrom = $usernames;
-        if (in_array($operator, self::OPERATORS, true)) {
-            $this->operatorOnFilteredUsernamesFrom = $operator;
-        }
+        $this->operatorOnFilteredUsernamesFrom = $operator instanceof Operators ? $operator : Operators::or;
 
         return $this;
     }
@@ -73,15 +68,13 @@ class TweetSearch extends AbstractController
      * Matches any Tweet that is in reply to a particular user.
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
      * @param array<string> $usernames
-     * @param string|null $operator
+     * @param Operators|null $operator
      * @return TweetSearch
      */
-    public function addFilterOnUsernamesTo(array $usernames, string $operator = null): TweetSearch
+    public function addFilterOnUsernamesTo(array $usernames, Operators $operator = null): TweetSearch
     {
         $this->filteredUsernamesTo = $usernames;
-        if (in_array($operator, self::OPERATORS, true)) {
-            $this->operatorOnFilteredUsernamesTo = $operator;
-        }
+        $this->operatorOnFilteredUsernamesTo = $operator instanceof Operators ? $operator : Operators::or;
 
         return $this;
     }
@@ -89,15 +82,13 @@ class TweetSearch extends AbstractController
     /**
      * Matches the exact phrase or a hashtag within the body of a Tweet.
      * @param array<string> $keywords
-     * @param string|null $operator
+     * @param Operators|null $operator
      * @return TweetSearch
      */
-    public function addFilterOnKeywordOrPhrase(array $keywords, string $operator = null): TweetSearch
+    public function addFilterOnKeywordOrPhrase(array $keywords, Operators $operator = null): TweetSearch
     {
         $this->filteredKeywords = $keywords;
-        if (in_array($operator, self::OPERATORS, true)) {
-            $this->operatorOnFilteredKeywords = $operator;
-        }
+        $this->operatorOnFilteredKeywords = $operator instanceof Operators ? $operator : Operators::or;
 
         return $this;
     }
@@ -192,7 +183,7 @@ class TweetSearch extends AbstractController
 
                 $endpoint .= '("' . $keyword . '"%20OR%20%23' . $keyword . ')';
                 if ($qtyKeywords > 1 && $loop < $qtyKeywords) {
-                    $endpoint .= '%20' . $this->operatorOnFilteredKeywords . '%20';
+                    $endpoint .= '%20' . $this->operatorOnFilteredKeywords->value . '%20';
                 }
             }
             $endpoint .= ')';
@@ -200,12 +191,14 @@ class TweetSearch extends AbstractController
 
         if (!empty($this->filteredUsernamesFrom)) {
             $endpoint .= '%20(from:' .
-                implode('%20' . $this->operatorOnFilteredUsernamesFrom . '%20from:', $this->filteredUsernamesFrom) . ')';
+                implode('%20' . $this->operatorOnFilteredUsernamesFrom->value . '%20from:', $this->filteredUsernamesFrom) .
+                ')';
         }
 
         if (!empty($this->filteredUsernamesTo)) {
             $endpoint .= '%20(to:' .
-                implode('%20' . $this->operatorOnFilteredUsernamesTo . '%20to:', $this->filteredUsernamesTo) . ')';
+                implode('%20' . $this->operatorOnFilteredUsernamesTo->value . '%20to:', $this->filteredUsernamesTo) .
+                ')';
         }
 
         if (!empty($this->filteredLocales)) {

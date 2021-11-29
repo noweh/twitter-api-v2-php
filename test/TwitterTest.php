@@ -5,6 +5,7 @@ namespace Noweh\TwitterApi\Test;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
+use Noweh\TwitterApi\Enum\Modes;
 
 class TwitterTest extends TestCase
 {
@@ -21,7 +22,7 @@ class TwitterTest extends TestCase
 
         $settings = [];
         foreach (getenv() as $settingKey => $settingValue) {
-            if (strpos($settingKey, 'TWITTER_') === 0) {
+            if (str_starts_with($settingKey, 'TWITTER_')) {
                 $settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
             }
         }
@@ -48,7 +49,7 @@ class TwitterTest extends TestCase
     {
         $this->assertIsObject(
             $this->twitterClient->userSearch()
-            ->findByIdOrUsername('twitterdev', Client::MODES['USERNAME'])
+            ->findByIdOrUsername('twitterdev', Modes::username)
             ->performRequest()
         );
     }
@@ -105,7 +106,7 @@ class TwitterTest extends TestCase
      * @return mixed
      * @throws \JsonException|\Exception|\GuzzleHttp\Exception\GuzzleException
      */
-    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false)
+    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false): mixed
     {
         $request = $this->twitterClient->tweetSearch()
             ->showMetrics()

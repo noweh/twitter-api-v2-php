@@ -10,7 +10,7 @@
   "require": {
     "ext-curl": "*",
     "ext-json": "*",
-    "php": ">=7.4",
+    "php": ">=8.1",
     "guzzlehttp/guzzle": "7.4.x-dev",
     "guzzlehttp/oauth-subscriber": "0.6.x-dev"
   },

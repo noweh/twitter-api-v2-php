@@ -2,18 +2,15 @@
 
 namespace Noweh\TwitterApi;
 
+use Noweh\TwitterApi\Enum\Modes;
+
 class UserSearch extends AbstractController
 {
-    public const MODES = [
-        'ID' => 'id',
-        'USERNAME' => 'username'
-    ];
-
     /** @var mixed $idOrUsername */
-    private $idOrUsername;
+    private mixed $idOrUsername;
 
-    /** @var string $mode */
-    private string $mode = self::MODES['USERNAME'];
+    /** @var Modes $mode */
+    private Modes $mode = Modes::username;
 
     /**
      * @param array<int, string> $settings
@@ -28,13 +25,13 @@ class UserSearch extends AbstractController
     /**
      * returns details about up to 100 users by ID or Username
      * @param mixed $idOrUsername can be an array of items
-     * @param string $mode
+     * @param Modes $mode
      * @return UserSearch
      */
-    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserSearch
+    public function findByIdOrUsername(mixed $idOrUsername, Modes $mode = Modes::id): UserSearch
     {
         $this->idOrUsername = $idOrUsername;
-        if (in_array($mode, self::MODES, true)) {
+        if ($mode instanceof Modes) {
             $this->mode = $mode;
         }
 
@@ -59,14 +56,14 @@ class UserSearch extends AbstractController
 
         $endpoint = parent::constructEndpoint();
         if (is_array($this->idOrUsername)) {
-            if ($this->mode === self::MODES['USERNAME']) {
+            if ($this->mode === Modes::username) {
                 $endpoint .= '/by?usernames=';
             } else {
                 $endpoint .= '?ids=';
             }
             $endpoint .= implode(',', $this->idOrUsername);
         } else {
-            if ($this->mode === self::MODES['USERNAME']) {
+            if ($this->mode === Modes::username) {
                 $endpoint .= '/by/username';
             }
             $endpoint .= '/' . $this->idOrUsername;

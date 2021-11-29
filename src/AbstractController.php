@@ -17,32 +17,32 @@ abstract class AbstractController
     /**
      * @var string
      */
-    private $access_token;
+    private string $access_token;
 
     /**
      * @var string
      */
-    private $access_token_secret;
+    private string $access_token_secret;
 
     /**
      * @var string
      */
-    private $consumer_key;
+    private string $consumer_key;
 
     /**
      * @var string
      */
-    private $consumer_secret;
+    private string $consumer_secret;
 
     /**
      * @var string
      */
-    private $bearer_token;
+    private string $bearer_token;
 
     /**
      * @var string $endpoint
      */
-    private $endpoint;
+    private string $endpoint;
 
     /**
      * Creates object. Requires an array of settings.
@@ -81,7 +81,7 @@ abstract class AbstractController
      * @throws \JsonException
      * @throws Exception
      */
-    public function performRequest(string $method = 'GET', array $postData = [])
+    public function performRequest(string $method = 'GET', array $postData = []): mixed
     {
         try {
             $headers = [
