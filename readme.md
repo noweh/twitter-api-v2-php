@@ -34,20 +34,21 @@ Firstly, you need to follow [this tutorial](https://developer.twitter.com/en/doc
 ### Prepare settings
 Settings are expected as below:
 
+    use Noweh\TwitterApi\Client;
+
+    $settings['account_id']
     $settings['access_token'],
     $settings['access_token_secret'],
     $settings['consumer_key'],
     $settings['consumer_secret'],
     $settings['bearer_token']
 
-### To search specific tweets
-    use Noweh\TwitterApi\TweetSearch;
+    $client = new Client($settings);
 
+### To search specific tweets
 Example:
 
-    $settings = ['...', '...']; // Previously retrieved from Twitter app
-
-    $return = (new TweetSearch($settings))
+    $return = $client->tweetSearch()
         ->showMetrics()
         ->onlyWithMedias()
         ->addFilterOnUsernamesFrom([
@@ -64,44 +65,27 @@ Example:
     ;
 
 ### To find Twitter Users
-    use Noweh\TwitterApi\UserSearch;
-
 `findByIdOrUsername()` expects either an array, or a string.
 
-You can specify the search mode as a second parameter (`UserSearch::MODES['USERNAME']` OR `UserSearch::MODES['ID']`)
+You can specify the search mode as a second parameter (`Client::MODES['USERNAME']` OR `Client::MODES['ID']`)
 
 Example:
 
-    $settings = ['...', '...']; // Previously retrieved from Twitter app
-
-    $return = (new UserSearch($settings))
+    $return = $client->userSearch()
         ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
         ->performRequest()
     ;
 
 ### To Post a new Tweet
-    use Noweh\TwitterApi\Tweet;
-
 Example:
 
-    $settings = ['...', '...']; // Previously retrieved from Twitter app
-
-    $tweet = new Tweet($this->settings);
-    $return = $tweet->performRequest('POST', ['text' => 'This is a test....']);
+    $return = $client->tweet()->performRequest('POST', ['text' => 'This is a test....']);
 
 ### To Retweet
-    use Noweh\TwitterApi\Retweet;
-
-You have to add your account ID in settings to Retweet
-    
-    $settings['account_id']
 
 Example:
     
-    $settings = ['...', '...']; // Previously retrieved from Twitter app
-
-    $retweeter = new Retweet($this->settings);
-    $return = $retweeter->performRequest('POST', ['tweet_id' => $tweet->id]);
+    $return = $client->retweet()->performRequest('POST', ['tweet_id' => $tweet->id]);
 
 ## Contributing
 Fork/download the code and run

@@ -13,7 +13,7 @@ class UserSearch extends AbstractController
     private $idOrUsername;
 
     /** @var string $mode */
-    private $mode = self::MODES['USERNAME'];
+    private string $mode = self::MODES['USERNAME'];
 
     /**
      * @param array<int, string> $settings
@@ -71,7 +71,6 @@ class UserSearch extends AbstractController
             }
             $endpoint .= '/' . $this->idOrUsername;
         }
-
 
         return $endpoint;
     }

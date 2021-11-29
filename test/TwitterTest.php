@@ -4,15 +4,12 @@ namespace Noweh\TwitterApi\Test;
 
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
-use Noweh\TwitterApi\Tweet;
-use Noweh\TwitterApi\Retweet;
-use Noweh\TwitterApi\TweetSearch;
-use Noweh\TwitterApi\UserSearch;
+use Noweh\TwitterApi\Client;
 
 class TwitterTest extends TestCase
 {
-    /** @var array<string> $settings */
-    private $settings = [];
+    /** @var Client $twitterClient */
+    private Client $twitterClient;
 
     /**
      * @throws \Exception
@@ -22,11 +19,14 @@ class TwitterTest extends TestCase
         $dotenv = Dotenv::createUnsafeImmutable(__DIR__.'/config', '.env');
         $dotenv->safeLoad();
 
+        $settings = [];
         foreach (getenv() as $settingKey => $settingValue) {
             if (strpos($settingKey, 'TWITTER_') === 0) {
-                $this->settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
+                $settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
             }
         }
+
+        $this->twitterClient = new Client($settings);
     }
 
     /**
@@ -47,8 +47,8 @@ class TwitterTest extends TestCase
     public function testSearchUsers(): void
     {
         $this->assertIsObject(
-            (new UserSearch($this->settings))
-            ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
+            $this->twitterClient->userSearch()
+            ->findByIdOrUsername('twitterdev', Client::MODES['USERNAME'])
             ->performRequest()
         );
     }
@@ -62,9 +62,8 @@ class TwitterTest extends TestCase
     {
         $date = new \DateTime('NOW');
 
-        $tweet = new Tweet($this->settings);
-
-        $return = $tweet->performRequest('POST',
+        $return = $this->twitterClient->tweet()->performRequest(
+            'POST',
             [
                 'text' =>
                     'BIP BIP BIP... ' .
@@ -80,17 +79,17 @@ class TwitterTest extends TestCase
     /**
      * Case 4: Retweet a Tweet
      * @throws \JsonException|\Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testRetweet(): void
     {
-        $retweeter = new Retweet($this->settings);
-
         $searchResult = $this->searchWithParameters(['avengers']);
         if (is_object($searchResult)) {
             $this->assertObjectHasAttribute('data', $searchResult);
 
             if (property_exists($searchResult, 'data')) {
-                $return = $retweeter->performRequest('POST', ['tweet_id' => $searchResult->data[0]->id]);
+                $return = $this->twitterClient->retweet()
+                    ->performRequest('POST', ['tweet_id' => $searchResult->data[0]->id]);
                 $this->assertIsObject($return);
             }
         } else {
@@ -104,12 +103,11 @@ class TwitterTest extends TestCase
      * @param array<string> $usernames
      * @param bool $onlyWithMedia
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \JsonException|\Exception
+     * @throws \JsonException|\Exception|\GuzzleHttp\Exception\GuzzleException
      */
     private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false)
     {
-        $request = (new TweetSearch($this->settings))
+        $request = $this->twitterClient->tweetSearch()
             ->showMetrics()
             ->addFilterOnLocales(['fr', 'en'])
             ->addMaxResults(11)

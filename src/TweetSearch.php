@@ -10,37 +10,37 @@ class TweetSearch extends AbstractController
     ];
 
     /** @var array<string> $filteredUsernamesFrom */
-    private $filteredUsernamesFrom = [];
+    private array $filteredUsernamesFrom = [];
 
     /** @var string $operatorOnFilteredUsernamesFrom */
-    private $operatorOnFilteredUsernamesFrom = self::OPERATORS['OR'];
+    private string $operatorOnFilteredUsernamesFrom = self::OPERATORS['OR'];
 
         /** @var array<string> $filteredUsernamesTo */
-    private $filteredUsernamesTo = [];
+    private array $filteredUsernamesTo = [];
 
     /** @var string $operatorOnFilteredUsernamesTo */
-    private $operatorOnFilteredUsernamesTo = self::OPERATORS['OR'];
+    private string $operatorOnFilteredUsernamesTo = self::OPERATORS['OR'];
 
     /** @var array<string> $filteredKeywords */
-    private $filteredKeywords = [];
+    private array $filteredKeywords = [];
 
     /** @var string $operatorOnFilteredKeywords */
-    private $operatorOnFilteredKeywords = self::OPERATORS['OR'];
+    private string $operatorOnFilteredKeywords = self::OPERATORS['OR'];
 
     /** @var array<string> $filteredLocales */
-    private $filteredLocales = [];
+    private array $filteredLocales = [];
 
     /** @var bool $addMetrics */
-    private $addMetrics = false;
+    private bool $addMetrics = false;
 
     /** @var bool $addUserDetails */
-    private $addUserDetails = false;
+    private bool $addUserDetails = false;
 
     /** @var bool $hasMedias */
-    private $hasMedias = false;
+    private bool $hasMedias = false;
 
     /** @var int $maxResults */
-    private $maxResults = null;
+    private int $maxResults;
 
     /**
      * @param array<string> $settings
