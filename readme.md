@@ -35,12 +35,14 @@ Settings are expected as below:
 
     use Noweh\TwitterApi\Client;
 
-    $settings['account_id']
-    $settings['access_token'],
-    $settings['access_token_secret'],
-    $settings['consumer_key'],
-    $settings['consumer_secret'],
-    $settings['bearer_token']
+    $settings = [
+        'account_id' => 1234567,
+        'consumer_key' => 'CONSUMER_KEY',
+        'consumer_secret' => 'CONSUMER_SECRET',
+        'bearer_token' => 'BEARER_TOKEN',
+        'access_token' => 'ACCESS_TOKEN',
+        'acess_token_secret' => 'ACCESS_TOKEN_SECRET'
+    ];
 
     $client = new Client($settings);
 
