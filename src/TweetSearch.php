@@ -216,7 +216,7 @@ class TweetSearch extends AbstractController
             $endpoint .= '%20has:media';
         }
 
-        if (!empty($this->maxResults) && $this->maxResults) {
+        if (!empty($this->maxResults)) {
             $endpoint .= '&max_results=' . $this->maxResults;
         }
 
