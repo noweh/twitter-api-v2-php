@@ -15,7 +15,7 @@ class TwitterTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $dotenv = Dotenv::createUnsafeImmutable(__DIR__.'/config', '.env');
         $dotenv->safeLoad();
