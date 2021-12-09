@@ -3,6 +3,7 @@
 namespace Noweh\TwitterApi;
 
 use Noweh\TwitterApi\Enum\Operators;
+use Noweh\TwitterApi\Model\Tweet;
 
 class TweetSearch extends AbstractController
 {
@@ -218,7 +219,7 @@ class TweetSearch extends AbstractController
         }
 
         if ($this->addUserDetails) {
-            $endpoint .= '&expansions=author_id&user.fields=description';
+            $endpoint .= '&expansions=author_id,attachments.media_keys&user.fields=description,profile_image_url&media.fields=media_key,type,url';
         }
 
         return $endpoint;
