@@ -1,9 +1,10 @@
 # Twitter API V2 for PHP
 
-![php](https://img.shields.io/badge/PHP-v8.1-828cb7.svg?style=flat-square)
+![php](https://img.shields.io/packagist/php-v/noweh/twitter-api-v2-php)
 [![Badge Twitter](https://img.shields.io/badge/Twitter%20API-v2-828cb7.svg?style=flat-square&logo=twitter&color=1DA1F2)](https://developer.twitter.com/en/docs/twitter-api)
 [![Run Tests](https://github.com/noweh/twitter-api-v2-php/actions/workflows/run-tests.yml/badge.svg)](https://github.com/noweh/twitter-api-v2-php/actions/workflows/run-tests.yml)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](licence.md)
+[![last version](https://img.shields.io/packagist/v/noweh/twitter-api-v2-php)](https://packagist.org/packages/noweh/twitter-api-v2-php)
 [![Downloads](https://img.shields.io/packagist/dt/noweh/twitter-api-v2-php)](https://packagist.org/packages/noweh/twitter-api-v2-php)
 
 Twitter API V2 is a PHP package which provides an easy and fast access to Twitter REST API for Version 2 endpoints.
