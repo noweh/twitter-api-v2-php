@@ -43,7 +43,7 @@ Settings are expected as below:
         'consumer_secret' => 'CONSUMER_SECRET',
         'bearer_token' => 'BEARER_TOKEN',
         'access_token' => 'ACCESS_TOKEN',
-        'acess_token_secret' => 'ACCESS_TOKEN_SECRET'
+        'access_token_secret' => 'ACCESS_TOKEN_SECRET'
     ];
 
     $client = new Client($settings);
