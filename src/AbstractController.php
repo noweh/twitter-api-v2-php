@@ -93,6 +93,13 @@ abstract class AbstractController
                 $client = new Client(['base_uri' => self::API_BASE_URI]);
 
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
+
+                // if GET method with id set, fetch tweet with id
+                if( is_array( $postData ) && isset( $postData['id'] ) && is_numeric( $postData['id']))  {
+                    $this->endpoint .= '/'.$postData['id'];
+                    // unset to avoid clash later.
+                    unset( $postData['id'] );
+                }
             } else {
                 // Inject Oauth handler
                 $stack = HandlerStack::create();
@@ -113,7 +120,8 @@ abstract class AbstractController
 
             $response  = $client->request($method, $this->constructEndpoint(), [
                 'headers' => $headers,
-                'json'    => $postData ?: null
+                        // this is always array from function spec,use count to see if data set. Otherwise twitter error on empty data.
+                'json'    => count($postData) ? $postData: null,
             ]);
 
             $body = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
