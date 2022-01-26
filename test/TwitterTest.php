@@ -98,6 +98,21 @@ class TwitterTest extends TestCase
     }
 
     /**
+     * Case 5: Fetch Tweet by Id
+     * @throws \JsonException|\Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testFetchTweet(): void
+    {
+        $this->assertIsObject($this->twitterClient->tweet()->performRequest(
+            'GET',
+            [
+                'id' => '1455953449422516226'
+            ]
+        ));
+    }
+
+    /**
      * Return a list of tweets with users details
      * @param array<string> $keywords
      * @param array<string> $usernames
