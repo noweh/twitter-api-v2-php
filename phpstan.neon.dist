@@ -5,12 +5,6 @@ parameters:
     excludePaths:
         - vendor
 
-    ignoreErrors:
-        # PHPStan does not supports Enums yet (v1.2.0)
-        - '/^Access to undefined constant Noweh\\TwitterApi\\Enum\\Operators::\w+\.$/'
-        - '/^Access to an undefined property Noweh\\TwitterApi\\Enum\\Operators::\$value\.$/'
-        - '/^Access to undefined constant Noweh\\TwitterApi\\Enum\\Modes::\w+\.$/'
-
     # Inclusions
     paths:
     	- .
