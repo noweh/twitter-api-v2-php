@@ -105,14 +105,12 @@ class TwitterTest extends TestCase
      */
     public function testFetchTweet(): void
     {
-        $return =
-            $this->twitterClient->tweet()->performRequest(
+        $this->assertIsObject($this->twitterClient->tweet()->performRequest(
             'GET',
-             [
+            [
                 'id' => '1455953449422516226'
-             ]
-        );
-        $this->assertIsObject($return);
+            ]
+        ));
     }
 
     /**

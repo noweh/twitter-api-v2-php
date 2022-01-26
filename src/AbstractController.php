@@ -95,10 +95,10 @@ abstract class AbstractController
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
 
                 // if GET method with id set, fetch tweet with id
-                if( is_array( $postData ) && isset( $postData['id'] ) && is_numeric( $postData['id']))  {
+                if (is_array($postData) && isset($postData['id']) && is_numeric($postData['id'])) {
                     $this->endpoint .= '/'.$postData['id'];
                     // unset to avoid clash later.
-                    unset( $postData['id'] );
+                    unset($postData['id']);
                 }
             } else {
                 // Inject Oauth handler
