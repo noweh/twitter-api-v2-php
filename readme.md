@@ -48,6 +48,12 @@ Settings are expected as below:
 
     $client = new Client($settings);
 
+### To fetch a tweet by Id
+Example:
+
+    $result = $client->tweet()->performRequest('GET', array( 'id' => $id));
+
+
 ### To search specific tweets
 Example:
 
