@@ -218,9 +218,13 @@ class TweetSearch extends AbstractController
             $endpoint .= '&tweet.fields=public_metrics';
         }
 
+        $endpoint .= '&expansions=attachments.media_keys';
+
         if ($this->addUserDetails) {
-            $endpoint .= '&expansions=author_id,attachments.media_keys&user.fields=description,profile_image_url&media.fields=media_key,type,url';
+            $endpoint .= ',author_id&user.fields=description,profile_image_url';
         }
+
+        $endpoint .= '&media.fields=duration_ms,height,media_key,preview_image_url,public_metrics,type,url,width,alt_text';
 
         return $endpoint;
     }
