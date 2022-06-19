@@ -27,6 +27,9 @@ class TweetSearch extends AbstractController
     /** @var string $operatorOnFilteredKeywords */
     private string $operatorOnFilteredKeywords = self::OPERATORS['OR'];
 
+    /** @var string $filteredConversationId */
+    private string $filteredConversationId;
+
     /** @var array<string> $filteredLocales */
     private array $filteredLocales = [];
 
@@ -103,6 +106,19 @@ class TweetSearch extends AbstractController
     }
 
     /**
+     * Matches any Tweet that is in reply to a particular conversation ID.
+     * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
+     * @param string $conversationId
+     * @return TweetSearch
+     */
+    public function addFilterOnConversationId(string $conversationId): TweetSearch
+    {
+        $this->filteredConversationId = $conversationId;
+
+        return $this;
+    }
+
+    /**
      * Matches Tweets that have been classified by Twitter as being of a particular language
      * (if, and only if, the Tweet has been classified).
      * It is important to note that each Tweet is currently only classified as being of one language,
@@ -172,7 +188,8 @@ class TweetSearch extends AbstractController
 
         if (empty($this->filteredKeywords) &&
             empty($this->filteredUsernamesFrom) &&
-            empty($this->filteredUsernamesTo)
+            empty($this->filteredUsernamesTo) &&
+            empty($this->filteredConversationId)
         ) {
             $error = new \stdClass();
             $error->message = 'cURL error';
@@ -206,6 +223,10 @@ class TweetSearch extends AbstractController
         if (!empty($this->filteredUsernamesTo)) {
             $endpoint .= '%20(to:' .
                 implode('%20' . $this->operatorOnFilteredUsernamesTo . '%20to:', $this->filteredUsernamesTo) . ')';
+        }
+
+        if (!empty($this->filteredConversationId)) {
+            $endpoint .= '%20conversation_id:' . $this->filteredConversationId;
         }
 
         if (!empty($this->filteredLocales)) {
