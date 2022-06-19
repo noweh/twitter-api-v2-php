@@ -20,7 +20,7 @@ Update your packages with *composer update* or install with *composer install*.
 
 This repository uses [Github Actions](https://github.com/noweh/twitter-api-v2-php/actions) for each push/pull request with [PHPStan/PHPUnit](/.github/workflows/run-tests.yml).
 
-Therefore, for each valid push, a new Tweet is posted from my [Twitter test account](https://twitter.com/SteveBOTgers/status/1462816862392127491).
+Therefore, for each valid push, a new Tweet is posted from my [Twitter test account](https://twitter.com/canWeDeploy/status/1538477133487644672).
 
 ## How to use
 
