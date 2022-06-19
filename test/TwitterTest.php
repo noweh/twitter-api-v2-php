@@ -36,7 +36,7 @@ class TwitterTest extends TestCase
      */
     public function testSearchTweets(): void
     {
-        $this->assertIsObject($this->searchWithParameters(['avengers']));
+        $this->assertIsObject($this->searchWithParameters(['php']));
     }
 
     /**
@@ -68,7 +68,7 @@ class TwitterTest extends TestCase
                 'text' =>
                     'BIP BIP BIP... ' .
                     $date->format(\DateTimeInterface::ATOM) .
-                    ' Avengers Assemble!  A new commit is on github (noweh/twitter-api-v2-php)....'
+                    ' Wake up!  A new commit is on github (noweh/twitter-api-v2-php)....'
 
             ]
         );
@@ -83,7 +83,7 @@ class TwitterTest extends TestCase
      */
     public function testRetweet(): void
     {
-        $searchResult = $this->searchWithParameters(['avengers']);
+        $searchResult = $this->searchWithParameters(['php']);
         if (is_object($searchResult)) {
             $this->assertObjectHasAttribute('data', $searchResult);
 
