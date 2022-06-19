@@ -75,7 +75,7 @@ abstract class AbstractController
     /**
      * Perform the request to Twitter API
      * @param string $method
-     * @param array<string, string> $postData
+     * @param array<string, mixed> $postData
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
