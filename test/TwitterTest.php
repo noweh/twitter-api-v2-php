@@ -55,6 +55,20 @@ class TwitterTest extends TestCase
     }
 
     /**
+     * Case 2: Find mentions
+     * @throws \JsonException
+     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
+     */
+    public function testFindMentions(): void
+    {
+        $this->assertIsObject(
+            $this->twitterClient->timeline()
+                ->findRecentMentioningForUserId('1538300985570885636')
+                ->performRequest()
+        );
+    }
+
+    /**
      * Case 3: Tweet
      * @throws \JsonException|\GuzzleHttp\Exception\GuzzleException
      * @throws \Exception

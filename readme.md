@@ -80,6 +80,11 @@ You can specify the search mode as a second parameter:
 
     ->findByIdOrUsername('twitterdev', \Noweh\TwitterApi\Enum\Modes::username) //OR \Noweh\TwitterApi\Enum\Modes::id
 
+### To find Recent Mentioning for a User
+Example:
+
+    $return = $client->timeline()->findRecentMentioningForUserId('1538300985570885636')->performRequest();
+
 ### To Post a new Tweet
 Example:
 

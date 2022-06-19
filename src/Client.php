@@ -41,6 +41,16 @@ class Client
     }
 
     /**
+     * Access to Timeline endpoints
+     * @return Timeline
+     * @throws \Exception
+     */
+    public function timeline(): Timeline
+    {
+        return new Timeline($this->settings);
+    }
+
+    /**
      * Access to TweetSearch endpoints
      * @return TweetSearch
      * @throws \Exception
