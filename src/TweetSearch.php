@@ -22,6 +22,9 @@ class TweetSearch extends AbstractController
     /** @var array<string> $filteredKeywords */
     private array $filteredKeywords = [];
 
+    /** @var string $filteredConversationId */
+    private string $filteredConversationId;
+
     /** @var Operators $operatorOnFilteredKeywords */
     private Operators $operatorOnFilteredKeywords;
 
@@ -90,6 +93,19 @@ class TweetSearch extends AbstractController
     {
         $this->filteredKeywords = $keywords;
         $this->operatorOnFilteredKeywords = $operator instanceof Operators ? $operator : Operators::or;
+
+        return $this;
+    }
+
+    /**
+     * Matches any Tweet that is in reply to a particular conversation ID.
+     * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
+     * @param string $conversationId
+     * @return TweetSearch
+     */
+    public function addFilterOnConversationId(string $conversationId): TweetSearch
+    {
+        $this->filteredConversationId = $conversationId;
 
         return $this;
     }
@@ -164,7 +180,8 @@ class TweetSearch extends AbstractController
 
         if (empty($this->filteredKeywords) &&
             empty($this->filteredUsernamesFrom) &&
-            empty($this->filteredUsernamesTo)
+            empty($this->filteredUsernamesTo) &&
+            empty($this->filteredConversationId)
         ) {
             $error = new \stdClass();
             $error->message = 'cURL error';
@@ -200,6 +217,10 @@ class TweetSearch extends AbstractController
             $endpoint .= '%20(to:' .
                 implode('%20' . $this->operatorOnFilteredUsernamesTo->value . '%20to:', $this->filteredUsernamesTo) .
                 ')';
+        }
+
+        if (!empty($this->filteredConversationId)) {
+            $endpoint .= '%20conversation_id:' . $this->filteredConversationId;
         }
 
         if (!empty($this->filteredLocales)) {
