@@ -40,6 +40,11 @@ class Client
         return new Retweet($this->settings);
     }
 
+    public function timeline()
+    {
+        return new Timeline($this->settings);
+    }
+
     /**
      * Access to Tweet endpoints
      * @return Tweet

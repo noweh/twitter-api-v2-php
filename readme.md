@@ -81,6 +81,11 @@ Example:
         ->performRequest()
     ;
 
+### To find Recent Mentioning for a User
+Example:
+
+    $return = $client->timeline()->findRecentMentioningForUserId('1538300985570885636')->performRequest();
+
 ### To Post a new Tweet
 Example:
 

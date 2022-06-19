@@ -54,7 +54,21 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Case 3: Tweet
+     * Case 3: Find mentions
+     * @throws \JsonException
+     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
+     */
+    public function testFindMentions(): void
+    {
+        $this->assertIsObject(
+            $this->twitterClient->timeline()
+                ->findRecentMentioningForUserId('1538300985570885636')
+                ->performRequest()
+        );
+    }
+
+    /**
+     * Case 4: Tweet
      * @throws \JsonException|\GuzzleHttp\Exception\GuzzleException
      * @throws \Exception
      */
@@ -77,7 +91,7 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Case 4: Retweet a Tweet
+     * Case 5: Retweet a Tweet
      * @throws \JsonException|\Exception
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -98,7 +112,7 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Case 5: Fetch Tweet by Id
+     * Case 6: Fetch Tweet by Id
      * @throws \JsonException|\Exception
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
