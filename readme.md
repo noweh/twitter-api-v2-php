@@ -80,6 +80,10 @@ You can specify the search mode as a second parameter:
 
     ->findByIdOrUsername('twitterdev', \Noweh\TwitterApi\Enum\Modes::username) //OR \Noweh\TwitterApi\Enum\Modes::id
 
+### To find all replies from a Tweet
+
+    ->addFilterOnConversationId("1538487287054577665");
+
 ### To find Recent Mentioning for a User
 Example:
 
