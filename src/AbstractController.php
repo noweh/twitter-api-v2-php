@@ -163,6 +163,9 @@ abstract class AbstractController
 
         } catch (ClientException | ServerException $e) {
             $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()));
+            if (! property_exists($payload, 'status')) {
+                $payload->status = $payload->errors[0]->code;
+            }
             throw new \Exception($payload->detail, $payload->status);
         }
     }

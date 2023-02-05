@@ -29,19 +29,6 @@ class UserSearch extends AbstractController
     }
 
     /**
-     * The maximum number of search results to be returned by a request.
-     * A number between 10 and 100.
-     * By default, a request response will return 10 results.
-     * @param int $number
-     * @return $this
-     */
-    public function addMaxResults(int $number): UserSearch
-    {
-        $this->maxResults = $number;
-        return $this;
-    }
-
-    /**
      * returns details about up to 100 users by ID or Username
      * @param mixed $idOrUsername can be an array of items
      * @param string $mode
@@ -97,11 +84,6 @@ class UserSearch extends AbstractController
                 $endpoint .= '?pagination_token=' . $this->next_page_token;
             }
         }
-
-        if (!empty($this->maxResults)) {
-            $endpoint .= '&max_results=' . $this->maxResults;
-        }
-
         return $endpoint;
     }
 }
