@@ -15,6 +15,9 @@ class UserSearch extends AbstractController
     /** @var string $mode */
     protected string $mode = self::MODES['USERNAME'];
 
+    /** @var int $maxResults */
+    private int $maxResults;
+
     /**
      * @param array<int, string> $settings
      * @throws \Exception
@@ -23,6 +26,19 @@ class UserSearch extends AbstractController
     {
         parent::__construct($settings);
         $this->setEndpoint('users');
+    }
+
+    /**
+     * The maximum number of search results to be returned by a request.
+     * A number between 10 and 100.
+     * By default, a request response will return 10 results.
+     * @param int $number
+     * @return $this
+     */
+    public function addMaxResults(int $number): TweetSearch
+    {
+        $this->maxResults = $number;
+        return $this;
     }
 
     /**
@@ -81,6 +97,11 @@ class UserSearch extends AbstractController
                 $endpoint .= '?pagination_token=' . $this->next_page_token;
             }
         }
+
+        if (!empty($this->maxResults)) {
+            $endpoint .= '&max_results=' . $this->maxResults;
+        }
+
         return $endpoint;
     }
 }
