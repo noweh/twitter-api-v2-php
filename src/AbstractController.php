@@ -11,8 +11,20 @@ use GuzzleHttp\HandlerStack;
 
 abstract class AbstractController
 {
-    /** @const string API_URL */
+    /** @const string API_BASE_URI */
     private const API_BASE_URI = 'https://api.twitter.com/2/';
+
+    /**
+     * @var int $auth_mode API Auth Mode
+     *                     0 use Bearer token.
+     *                     1 use OAuth1 token.
+     */
+    protected int $auth_mode = 0;
+
+    /**
+     * @var int $account_id OAuth1 User ID
+     */
+    protected int $account_id;
 
     /**
      * @var string
@@ -44,18 +56,11 @@ abstract class AbstractController
      */
     private $endpoint = '';
 
+    /** @var string $next_page_token Next Page Token for API pagination. */
+    protected string $next_page_token;
+
     /** @var string $mode */
     protected string $mode;
-
-    /**
-     * @var int $auth_mode API Auth Mode
-     *                     0 use Bearer token.
-     *                     1 use OAuth1 token.
-     */
-    protected int $auth_mode = 0;
-
-    /** @var int $account_id OAuth1 User ID */
-    protected int $account_id;
 
     /**
      * Creates object. Requires an array of settings.
@@ -160,7 +165,7 @@ abstract class AbstractController
             return $body;
 
         } catch (ClientException | ServerException $e) {
-            $payload = str_replace(["\n"], "", $e->getResponse()->getBody()->getContents());
+            $payload = str_replace("\n", "", $e->getResponse()->getBody()->getContents());
             throw new Exception($payload);
         }
     }

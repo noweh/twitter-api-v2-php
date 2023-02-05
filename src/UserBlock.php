@@ -36,28 +36,19 @@ class UserBlock extends AbstractController {
     }
 
     /**
-     * Retrieve Endpoint value and rebuilt it with the expected parameters
-     * @return string
-     * @throws Exception
-     */
-    protected function constructEndpoint(): string {
-        $endpoint = parent::constructEndpoint();
-        if ($this->mode == self::MODES['LOOKUP']) {
-            $endpoint .= '/blocking';
-        }
-        return $endpoint;
-    }
-
-    /**
      * Look up blocked users by username or ID.
      *
      * @param mixed $idOrUsername can be an array of items
+     * @param string|null $next_page_token
      * @return UserBlock
      */
-    public function lookup(mixed $idOrUsername): UserBlock
+    public function lookup(mixed $idOrUsername, string|null $next_page_token=null): UserBlock
     {
         $this->mode = self::MODES['LOOKUP'];
         $this->idOrUsername = $idOrUsername;
+        if ($next_page_token != null) {
+            $this->next_page_token = $next_page_token;
+        }
         return $this;
     }
 
@@ -85,5 +76,18 @@ class UserBlock extends AbstractController {
         $this->mode = self::MODES['UNBLOCK'];
         $this->idOrUsername = $idOrUsername;
         return $this;
+    }
+
+    /**
+     * Retrieve Endpoint value and rebuilt it with the expected parameters
+     * @return string
+     * @throws Exception
+     */
+    protected function constructEndpoint(): string {
+        $endpoint = parent::constructEndpoint();
+        if ($this->mode == self::MODES['LOOKUP']) {
+            $endpoint .= '/blocking';
+        }
+        return $endpoint;
     }
 }
