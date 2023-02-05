@@ -54,8 +54,8 @@ abstract class AbstractController
      */
     private $endpoint = '';
 
-    /** @var string $next_page_token Next Page Token for API pagination. */
-    protected string $next_page_token;
+    /** @var string|null $next_page_token Next Page Token for API pagination. */
+    protected string|null $next_page_token = null;
 
     /** @var string $mode */
     protected string $mode;
