@@ -31,6 +31,7 @@ class UserBlock extends AbstractController {
             throw new Exception('Incomplete settings passed. Expected "account_id"');
         }
 
+        $this->setAuthMode(1);
         $this->setEndpoint('users/'.$this->account_id);
     }
 
@@ -55,7 +56,6 @@ class UserBlock extends AbstractController {
      */
     public function lookup(mixed $idOrUsername): UserBlock
     {
-        $this->setAuthMode(1);
         $this->mode = self::MODES['LOOKUP'];
         $this->idOrUsername = $idOrUsername;
         return $this;
@@ -69,7 +69,6 @@ class UserBlock extends AbstractController {
      */
     public function block(mixed $idOrUsername): UserBlock
     {
-        $this->setAuthMode(1);
         $this->mode = self::MODES['BLOCK'];
         $this->idOrUsername = $idOrUsername;
         return $this;
@@ -83,7 +82,6 @@ class UserBlock extends AbstractController {
      */
     public function unblock(mixed $idOrUsername): UserBlock
     {
-        $this->setAuthMode(1);
         $this->mode = self::MODES['UNBLOCK'];
         $this->idOrUsername = $idOrUsername;
         return $this;
