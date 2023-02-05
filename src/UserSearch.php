@@ -31,13 +31,15 @@ class UserSearch extends AbstractController
      * @param string $mode
      * @return UserSearch
      */
-    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserSearch
+    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID'], string|null $next_page_token=null): UserSearch
     {
         $this->idOrUsername = $idOrUsername;
         if (in_array($mode, self::MODES, true)) {
             $this->mode = $mode;
         }
-
+        if ($next_page_token != null) {
+            $this->next_page_token = $next_page_token;
+        }
         return $this;
     }
 

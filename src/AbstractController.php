@@ -162,8 +162,8 @@ abstract class AbstractController
             return $body;
 
         } catch (ClientException | ServerException $e) {
-            $payload = str_replace("\n", "", $e->getResponse()->getBody()->getContents());
-            throw new \Exception($payload);
+            $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()));
+            throw new \Exception($payload->detail, $payload->status);
         }
     }
 
@@ -196,5 +196,11 @@ abstract class AbstractController
     protected function constructEndpoint(): string
     {
         return $this->endpoint;
+    }
+
+    public function setPaginationToken(string $value): AbstractController
+    {
+        $this->next_page_token = $value;
+        return $this;
     }
 }

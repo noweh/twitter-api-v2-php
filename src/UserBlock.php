@@ -38,13 +38,10 @@ class UserBlock extends AbstractController {
      * @param string|null $next_page_token
      * @return UserBlock
      */
-    public function lookup(string|null $next_page_token=null): UserBlock
+    public function lookup(): UserBlock
     {
         $this->setAuthMode(1);
         $this->mode = self::MODES['LOOKUP'];
-        if ($next_page_token != null) {
-            $this->next_page_token = $next_page_token;
-        }
         return $this;
     }
 
@@ -86,6 +83,11 @@ class UserBlock extends AbstractController {
         if ($this->mode == self::MODES['LOOKUP']) {
             $endpoint .= '/blocking';
         }
+
+        if (!empty($this->maxResults)) {
+            $endpoint .= '?max_results=' . $this->maxResults;
+        }
+
         return $endpoint;
     }
 }
