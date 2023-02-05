@@ -1,8 +1,6 @@
 <?php
-
 namespace Noweh\TwitterApi;
 
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
@@ -65,12 +63,12 @@ abstract class AbstractController
     /**
      * Creates object. Requires an array of settings.
      * @param array<string> $settings
-     * @throws Exception when CURL extension is not loaded
+     * @throws \Exception when CURL extension is not loaded
      */
     public function __construct(array $settings = [])
     {
         if (!extension_loaded('curl')) {
-            throw new Exception('PHP extension CURL is not loaded.');
+            throw new \Exception('PHP extension CURL is not loaded.');
         }
 
         if (!isset(
@@ -84,7 +82,7 @@ abstract class AbstractController
             $settings['access_token'],
             $settings['access_token_secret']
         )) {
-            throw new Exception('Incomplete settings passed.');
+            throw new \Exception('Incomplete settings passed.');
         }
 
         $this->consumer_key = $settings['consumer_key'];
@@ -102,7 +100,7 @@ abstract class AbstractController
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
-     * @throws Exception
+     * @throws \Exception
      */
     public function performRequest(string $method = 'GET', array $postData = []): mixed
     {
@@ -114,7 +112,7 @@ abstract class AbstractController
 
             if ($this->auth_mode == 0) {
 
-                // Inject the Bearer token into the header for the call
+                // Inject the Bearer token header
                 $client = new Client(['base_uri' => self::API_BASE_URI]);
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
                 
@@ -126,7 +124,7 @@ abstract class AbstractController
                 }
             } else {
 
-                // Inject Oauth handler
+                // Insert Oauth1 middleware
                 $stack = HandlerStack::create();
                 $middleware = new Oauth1([
                     'consumer_key' => $this->consumer_key,
@@ -135,7 +133,6 @@ abstract class AbstractController
                     'token_secret' => $this->access_token_secret,
                 ]);
                 $stack->push($middleware);
-
                 $client = new Client([
                     'base_uri' => self::API_BASE_URI,
                     'handler' => $stack,
@@ -157,7 +154,7 @@ abstract class AbstractController
                 if ($body) {
                     $error->details = $response;
                 }
-                throw new Exception(
+                throw new \Exception(
                     json_encode($error, JSON_THROW_ON_ERROR),
                     $response->getStatusCode()
                 );
@@ -166,7 +163,7 @@ abstract class AbstractController
 
         } catch (ClientException | ServerException $e) {
             $payload = str_replace("\n", "", $e->getResponse()->getBody()->getContents());
-            throw new Exception($payload);
+            throw new \Exception($payload);
         }
     }
 

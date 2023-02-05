@@ -2,8 +2,6 @@
 
 namespace Noweh\TwitterApi;
 
-use Exception;
-
 class Tweet extends AbstractController
 {
     /**
@@ -15,7 +13,7 @@ class Tweet extends AbstractController
         parent::__construct($settings);
 
         if (!isset($settings['account_id'])) {
-            throw new Exception('Incomplete settings passed. Expected "account_id"');
+            throw new \Exception('Incomplete settings passed. Expected "account_id"');
         }
 
         $this->setAuthMode(1);

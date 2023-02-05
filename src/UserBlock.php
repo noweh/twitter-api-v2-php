@@ -2,8 +2,6 @@
 
 namespace Noweh\TwitterApi;
 
-use Exception;
-
 /**
  * Class User/Block Controller
  * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/blocks/api-reference/get-users-blocking">Blocks</a>
@@ -26,9 +24,8 @@ class UserBlock extends AbstractController {
     public function __construct(array $settings)
     {
         parent::__construct($settings);
-
         if (!isset($settings['account_id'])) {
-            throw new Exception('Incomplete settings passed. Expected "account_id"');
+            throw new \Exception('Incomplete settings passed. Expected "account_id"');
         }
 
         $this->setAuthMode(1);
@@ -36,16 +33,15 @@ class UserBlock extends AbstractController {
     }
 
     /**
-     * Look up blocked users by username or ID.
+     * Look up blocked users.
      *
-     * @param mixed $idOrUsername can be an array of items
      * @param string|null $next_page_token
      * @return UserBlock
      */
-    public function lookup(mixed $idOrUsername, string|null $next_page_token=null): UserBlock
+    public function lookup(string|null $next_page_token=null): UserBlock
     {
+        $this->setAuthMode(1);
         $this->mode = self::MODES['LOOKUP'];
-        $this->idOrUsername = $idOrUsername;
         if ($next_page_token != null) {
             $this->next_page_token = $next_page_token;
         }
@@ -60,6 +56,7 @@ class UserBlock extends AbstractController {
      */
     public function block(mixed $idOrUsername): UserBlock
     {
+        $this->setAuthMode(1);
         $this->mode = self::MODES['BLOCK'];
         $this->idOrUsername = $idOrUsername;
         return $this;
@@ -73,6 +70,7 @@ class UserBlock extends AbstractController {
      */
     public function unblock(mixed $idOrUsername): UserBlock
     {
+        $this->setAuthMode(1);
         $this->mode = self::MODES['UNBLOCK'];
         $this->idOrUsername = $idOrUsername;
         return $this;
@@ -81,7 +79,7 @@ class UserBlock extends AbstractController {
     /**
      * Retrieve Endpoint value and rebuilt it with the expected parameters
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
     protected function constructEndpoint(): string {
         $endpoint = parent::constructEndpoint();
