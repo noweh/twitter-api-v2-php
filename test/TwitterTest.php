@@ -2,6 +2,7 @@
 
 namespace Noweh\TwitterApi\Test;
 
+use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
@@ -11,28 +12,31 @@ class TwitterTest extends TestCase
     /** @var Client $twitterClient */
     private Client $twitterClient;
 
+    private static array $settings = [];
+
     /**
      * @throws \Exception
      */
     public function setUp(): void
     {
-        $dotenv = Dotenv::createUnsafeImmutable(__DIR__.'/config', '.env');
-        $dotenv->safeLoad();
+        // may lead to Exception : Incomplete settings passed.
+        if (class_exists('Dotenv')) {
+            $dotenv = Dotenv::createUnsafeImmutable(__DIR__.'/config', '.env');
+            $dotenv->safeLoad();
+        }
 
-        $settings = [];
         foreach (getenv() as $settingKey => $settingValue) {
             if (strpos($settingKey, 'TWITTER_') === 0) {
-                $settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
+                self::$settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
             }
         }
 
-        $this->twitterClient = new Client($settings);
+        $this->twitterClient = new Client(self::$settings);
     }
 
     /**
      * Case 1: Search a Tweet
-     * @throws \JsonException
-     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
+     * @throws \JsonException | GuzzleException
      */
     public function testSearchTweets(): void
     {
@@ -41,8 +45,7 @@ class TwitterTest extends TestCase
 
     /**
      * Case 2: Search an User
-     * @throws \JsonException
-     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
+     * @throws \JsonException | GuzzleException
      */
     public function testSearchUsers(): void
     {
@@ -50,6 +53,19 @@ class TwitterTest extends TestCase
             $this->twitterClient->userSearch()
             ->findByIdOrUsername('twitterdev', Client::MODES['USERNAME'])
             ->performRequest()
+        );
+    }
+
+    /**
+     * List blocked users
+     * @throws GuzzleException | \JsonException | \Exception
+     */
+    public function testUserBlockList(): void
+    {
+        $this->assertIsObject(
+            $this->twitterClient->userBlock()
+                ->lookup('twitterdev')
+                ->performRequest()
         );
     }
 
@@ -119,9 +135,8 @@ class TwitterTest extends TestCase
     public function testFetchTweet(): void
     {
         $this->assertIsObject($this->twitterClient->tweet()->performRequest(
-            'GET',
-            [
-                'id' => '1455953449422516226'
+            'POST', [
+                'ids' => self::$settings['account_id']
             ]
         ));
     }

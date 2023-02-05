@@ -18,6 +18,7 @@ class Tweet extends AbstractController
             throw new Exception('Incomplete settings passed. Expected "account_id"');
         }
 
+        $this->setAuthMode(1);
         $this->setEndpoint('tweets');
     }
 }

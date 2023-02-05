@@ -35,7 +35,7 @@ class Client
      * @return Retweet
      * @throws \Exception
      */
-    public function retweet()
+    public function retweet(): Retweet
     {
         return new Retweet($this->settings);
     }
@@ -45,7 +45,7 @@ class Client
      * @return Timeline
      * @throws \Exception
      */
-    public function timeline()
+    public function timeline(): Timeline
     {
         return new Timeline($this->settings);
     }
@@ -55,7 +55,7 @@ class Client
      * @return Tweet
      * @throws \Exception
      */
-    public function tweet()
+    public function tweet(): Tweet
     {
         return new Tweet($this->settings);
     }
@@ -65,7 +65,7 @@ class Client
      * @return TweetSearch
      * @throws \Exception
      */
-    public function tweetSearch()
+    public function tweetSearch(): TweetSearch
     {
         return new TweetSearch($this->settings);
     }
@@ -75,8 +75,18 @@ class Client
      * @return UserSearch
      * @throws \Exception
      */
-    public function userSearch()
+    public function userSearch(): UserSearch
     {
         return new UserSearch($this->settings);
+    }
+
+    /**
+     * Access To UserBlock endpoints
+     * @return UserBlock
+     * @throws \Exception
+     */
+    public function userBlock(): UserBlock
+    {
+        return new UserBlock($this->settings);
     }
 }

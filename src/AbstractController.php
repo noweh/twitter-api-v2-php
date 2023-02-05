@@ -42,7 +42,20 @@ abstract class AbstractController
     /**
      * @var string $endpoint
      */
-    private $endpoint;
+    private $endpoint = '';
+
+    /** @var string $mode */
+    protected string $mode;
+
+    /**
+     * @var int $auth_mode API Auth Mode
+     *                     0 use Bearer token.
+     *                     1 use OAuth1 token.
+     */
+    protected int $auth_mode = 0;
+
+    /** @var int $account_id OAuth1 User ID */
+    protected int $account_id;
 
     /**
      * Creates object. Requires an array of settings.
@@ -56,20 +69,25 @@ abstract class AbstractController
         }
 
         if (!isset(
-            $settings['access_token'],
-            $settings['access_token_secret'],
+            // Consumer Keys
             $settings['consumer_key'],
             $settings['consumer_secret'],
-            $settings['bearer_token']
+
+            // Authentication Tokens
+            $settings['bearer_token'],
+            $settings['account_id'],
+            $settings['access_token'],
+            $settings['access_token_secret']
         )) {
             throw new Exception('Incomplete settings passed.');
         }
 
-        $this->access_token = $settings['access_token'];
-        $this->access_token_secret = $settings['access_token_secret'];
         $this->consumer_key = $settings['consumer_key'];
         $this->consumer_secret = $settings['consumer_secret'];
         $this->bearer_token = $settings['bearer_token'];
+        $this->account_id = $settings['account_id']; // TWITTER_ACCOUNT_ID; also contained in TWITTER_ACCESS_TOKEN.
+        $this->access_token = $settings['access_token'];
+        $this->access_token_secret = $settings['access_token_secret'];
     }
 
     /**
@@ -81,19 +99,20 @@ abstract class AbstractController
      * @throws \JsonException
      * @throws Exception
      */
-    public function performRequest(string $method = 'GET', array $postData = [])
+    public function performRequest(string $method = 'GET', array $postData = []): mixed
     {
         try {
             $headers = [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ];
-            if ($method === 'GET') {
+
+            if ($this->auth_mode == 0) {
+
                 // Inject the Bearer token into the header for the call
                 $client = new Client(['base_uri' => self::API_BASE_URI]);
-
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
-
+                
                 // if GET method with id set, fetch tweet with id
                 if (is_array($postData) && isset($postData['id']) && is_numeric($postData['id'])) {
                     $this->endpoint .= '/'.$postData['id'];
@@ -101,6 +120,7 @@ abstract class AbstractController
                     unset($postData['id']);
                 }
             } else {
+
                 // Inject Oauth handler
                 $stack = HandlerStack::create();
                 $middleware = new Oauth1([
@@ -120,13 +140,12 @@ abstract class AbstractController
 
             $response  = $client->request($method, $this->constructEndpoint(), [
                 'headers' => $headers,
-                // this is always array from function spec,use count to see if data set.
-                // Otherwise twitter error on empty data.
+                // This is always array from function spec, use count to see if data set.
+                // Otherwise, twitter error on empty data.
                 'json' => count($postData) ? $postData: null,
             ]);
 
             $body = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
-
             if ($response->getStatusCode() >= 400) {
                 $error = new \stdClass();
                 $error->message = 'cURL error';
@@ -138,11 +157,24 @@ abstract class AbstractController
                     $response->getStatusCode()
                 );
             }
-
             return $body;
+
         } catch (ClientException | ServerException $e) {
-            throw new Exception(json_encode($e->getResponse()->getBody()->getContents(), JSON_THROW_ON_ERROR));
+            $payload = str_replace(["\n"], "", $e->getResponse()->getBody()->getContents());
+            throw new Exception($payload);
         }
+    }
+
+    /**
+     * Set Auth-Mode value
+     *
+     * @param int $value 0 use Bearer token.
+     *                   1 use OAuth1 token.
+     * @return void
+     */
+    public function setAuthMode(int $value): void
+    {
+        $this->auth_mode = $value;
     }
 
     /**
