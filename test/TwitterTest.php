@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
+use function PHPUnit\Framework\assertTrue;
 
 class TwitterTest extends TestCase
 {
@@ -115,11 +116,11 @@ class TwitterTest extends TestCase
     {
         $searchResult = $this->searchWithParameters(['php']);
         if (is_object($searchResult)) {
-            $this->assertObjectHasAttribute('data', $searchResult);
-
+            assertTrue(property_exists($searchResult, 'data'));
             if (property_exists($searchResult, 'data')) {
-                $return = $this->twitterClient->retweet()
-                    ->performRequest('POST', ['tweet_id' => $searchResult->data[0]->id]);
+                $return = $this->twitterClient->retweet()->performRequest('POST', [
+                    'tweet_id' => $searchResult->data[0]->id
+                ]);
                 $this->assertIsObject($return);
             }
         } else {
@@ -149,7 +150,7 @@ class TwitterTest extends TestCase
      * @return mixed
      * @throws \JsonException|\Exception|\GuzzleHttp\Exception\GuzzleException
      */
-    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false)
+    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false): mixed
     {
         $request = $this->twitterClient->tweetSearch()
             ->showMetrics()
