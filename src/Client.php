@@ -81,12 +81,22 @@ class Client
     }
 
     /**
-     * Access To UserBlock endpoints
-     * @return UserBlock
+     * Access To User/Blocks endpoints
+     * @return UserBlocks
      * @throws \Exception
      */
-    public function userBlock(): UserBlock
+    public function userBlocks(): UserBlocks
     {
-        return new UserBlock($this->settings);
+        return new UserBlocks($this->settings);
+    }
+
+    /**
+     * Access To User/Follows endpoints
+     * @return UserBlocks
+     * @throws \Exception
+     */
+    public function userFollows(): UserFollows
+    {
+        return new UserFollows($this->settings);
     }
 }

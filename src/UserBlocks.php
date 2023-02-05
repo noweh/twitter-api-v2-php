@@ -3,11 +3,11 @@
 namespace Noweh\TwitterApi;
 
 /**
- * Class User/Block Controller
+ * Class User/Blocks Controller
  * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/blocks/api-reference/get-users-blocking">Blocks</a>
  * @author Martin Zeitler
  */
-class UserBlock extends AbstractController {
+class UserBlocks extends AbstractController {
 
     public const MODES = [
         'LOOKUP' => 'lookup',
@@ -34,9 +34,9 @@ class UserBlock extends AbstractController {
 
     /**
      * Look up blocked users.
-     * @return UserBlock
+     * @return UserBlocks
      */
-    public function lookup(): UserBlock
+    public function lookup(): UserBlocks
     {
         $this->setAuthMode(1);
         $this->mode = self::MODES['LOOKUP'];
@@ -46,9 +46,9 @@ class UserBlock extends AbstractController {
     /**
      * Block user by username or ID.
      * @param mixed $idOrUsername can be an array of items
-     * @return UserBlock
+     * @return UserBlocks
      */
-    public function block(mixed $idOrUsername): UserBlock
+    public function block(mixed $idOrUsername): UserBlocks
     {
         $this->setAuthMode(1);
         $this->mode = self::MODES['BLOCK'];
@@ -60,9 +60,9 @@ class UserBlock extends AbstractController {
      * Unblock user by username or ID.
      *
      * @param mixed $idOrUsername can be an array of items
-     * @return UserBlock
+     * @return UserBlocks
      */
-    public function unblock(mixed $idOrUsername): UserBlock
+    public function unblock(mixed $idOrUsername): UserBlocks
     {
         $this->setAuthMode(1);
         $this->mode = self::MODES['UNBLOCK'];

@@ -58,19 +58,6 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * List blocked users
-     * @throws GuzzleException | \JsonException | \Exception
-     */
-    public function testUserBlockList(): void
-    {
-        $this->assertIsObject(
-            $this->twitterClient->userBlock()
-                ->lookup('twitterdev')
-                ->performRequest()
-        );
-    }
-
-    /**
      * Case 3: Find mentions
      * @throws \JsonException
      * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
@@ -140,6 +127,45 @@ class TwitterTest extends TestCase
                 'ids' => self::$settings['account_id']
             ]
         ));
+    }
+
+    /**
+     * List blocked users
+     * @throws GuzzleException | \JsonException | \Exception
+     */
+    public function testUserBlocksLookup(): void
+    {
+        $this->assertIsObject(
+            $this->twitterClient->userBlocks()
+                ->lookup()
+                ->performRequest()
+        );
+    }
+
+    /**
+     * List followers
+     * @throws GuzzleException | \JsonException | \Exception
+     */
+    public function testUserFollowers(): void
+    {
+        $this->assertIsObject(
+            $this->twitterClient->userFollows()
+                ->getFollowers()
+                ->performRequest()
+        );
+    }
+
+    /**
+     * List following
+     * @throws GuzzleException | \JsonException | \Exception
+     */
+    public function testUserFollowing(): void
+    {
+        $this->assertIsObject(
+            $this->twitterClient->userFollows()
+                ->getFollowing()
+                ->performRequest()
+        );
     }
 
     /**
