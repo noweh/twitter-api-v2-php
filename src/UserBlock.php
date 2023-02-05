@@ -34,8 +34,6 @@ class UserBlock extends AbstractController {
 
     /**
      * Look up blocked users.
-     *
-     * @param string|null $next_page_token
      * @return UserBlock
      */
     public function lookup(): UserBlock
@@ -47,7 +45,6 @@ class UserBlock extends AbstractController {
 
     /**
      * Block user by username or ID.
-     *
      * @param mixed $idOrUsername can be an array of items
      * @return UserBlock
      */
@@ -79,13 +76,15 @@ class UserBlock extends AbstractController {
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
+
         $endpoint = parent::constructEndpoint();
         if ($this->mode == self::MODES['LOOKUP']) {
             $endpoint .= '/blocking';
         }
 
-        if (!empty($this->maxResults)) {
-            $endpoint .= '?max_results=' . $this->maxResults;
+        // Pagination
+        if (! is_null($this->next_page_token)) {
+            $endpoint .= '?pagination_token=' . $this->next_page_token;
         }
 
         return $endpoint;

@@ -55,7 +55,6 @@ class UserSearch extends AbstractController
             $error = new \stdClass();
             $error->message = 'cURL error';
             $error->details = 'An id or username is required';
-
             throw new \Exception(json_encode($error, JSON_THROW_ON_ERROR), 403);
         }
 
@@ -67,13 +66,21 @@ class UserSearch extends AbstractController
                 $endpoint .= '?ids=';
             }
             $endpoint .= implode(',', $this->idOrUsername);
+            // Pagination
+            if (! is_null($this->next_page_token)) {
+                $endpoint .= '&pagination_token=' . $this->next_page_token;
+            }
         } else {
             if ($this->mode === self::MODES['USERNAME']) {
                 $endpoint .= '/by/username';
             }
             $endpoint .= '/' . $this->idOrUsername;
-        }
 
+            // Pagination
+            if (! is_null($this->next_page_token)) {
+                $endpoint .= '?pagination_token=' . $this->next_page_token;
+            }
+        }
         return $endpoint;
     }
 }

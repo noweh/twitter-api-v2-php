@@ -253,6 +253,11 @@ class TweetSearch extends AbstractController
 
         $endpoint .= '&media.fields=duration_ms,height,media_key,preview_image_url,public_metrics,type,url,width,alt_text';
 
+        // Pagination
+        if (! is_null($this->next_page_token)) {
+            $endpoint .= '&pagination_token=' . $this->next_page_token;
+        }
+
         return $endpoint;
     }
 }
