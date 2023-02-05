@@ -35,7 +35,7 @@ class UserSearch extends AbstractController
      * @param int $number
      * @return $this
      */
-    public function addMaxResults(int $number): TweetSearch
+    public function addMaxResults(int $number): UserSearch
     {
         $this->maxResults = $number;
         return $this;
