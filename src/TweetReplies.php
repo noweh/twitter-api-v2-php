@@ -16,7 +16,6 @@ class TweetReplies extends AbstractController {
     public function __construct(array $settings)
     {
         parent::__construct($settings);
-        $this->setHttpRequestMethod('PUT');
         $this->setAuthMode(1);
     }
 
@@ -29,6 +28,7 @@ class TweetReplies extends AbstractController {
     public function hideReply(int $tweet_id): TweetReplies
     {
         $this->setEndpoint('tweets/' . $tweet_id . '/hidden');
+        $this->setHttpRequestMethod('PUT');
         return $this;
     }
 }

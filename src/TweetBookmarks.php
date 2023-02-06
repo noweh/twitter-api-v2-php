@@ -26,7 +26,7 @@ class TweetBookmarks extends AbstractController {
      */
     public function lookup(): TweetBookmarks
     {
-        $this->setEndpoint('users/'.$this->account_id.'/bookmarks');
+        $this->setEndpoint('users/' . $this->account_id . '/bookmarks');
         return $this;
     }
 
@@ -37,7 +37,7 @@ class TweetBookmarks extends AbstractController {
     public function bookmarkTweet(): TweetBookmarks
     {
         $this->setHttpRequestMethod('POST');
-        $this->setEndpoint('users/'.$this->account_id.'/bookmarks');
+        $this->setEndpoint('users/' . $this->account_id . '/bookmarks');
         return $this;
     }
 
@@ -49,7 +49,7 @@ class TweetBookmarks extends AbstractController {
     public function removeBookmark(int $target_tweet_id): TweetBookmarks
     {
         $this->setHttpRequestMethod('DELETE');
-        $this->setEndpoint('users/'.$this->account_id.'/bookmarks/' . $target_tweet_id);
+        $this->setEndpoint('users/' . $this->account_id . '/bookmarks/' . $target_tweet_id);
         return $this;
     }
 
@@ -59,11 +59,10 @@ class TweetBookmarks extends AbstractController {
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
-        $query = [];
         $endpoint = parent::constructEndpoint();
         if (! is_null($this->next_page_token)) {
-            $query['pagination_token'] = $this->next_page_token;
-            $endpoint .= '?' . http_build_query($query);
+            $this->query_string['pagination_token'] = $this->next_page_token;
+            $endpoint .= '?' . http_build_query($this->query_string);
         }
         return $endpoint;
     }

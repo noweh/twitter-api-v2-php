@@ -192,7 +192,6 @@ class TweetLookup extends AbstractController
             $error = new \stdClass();
             $error->message = 'cURL error';
             $error->details = 'A filter on keyword or user is required';
-
             throw new \Exception(json_encode($error, JSON_THROW_ON_ERROR), 403);
         }
 

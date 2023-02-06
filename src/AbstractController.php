@@ -53,6 +53,10 @@ abstract class AbstractController
     /** @var string $mode mode of operation */
     private string $http_request_method = 'GET';
 
+    protected array $query_string = [];
+
+    protected array $post_body = [];
+
     /**
      * Creates object. Requires an array of settings.
      * @param array<string> $settings

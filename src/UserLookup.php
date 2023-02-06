@@ -32,7 +32,7 @@ class UserLookup extends AbstractController
 
     /**
      * Returns details about up to 100 users by ID or Username
-     * @param $idOrUsername
+     * @param int|string|array $idOrUsername
      * @return UserLookup
      */
     public function findByIdOrUsername($idOrUsername): UserLookup
