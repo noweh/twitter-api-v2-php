@@ -16,8 +16,8 @@ class Tweet extends AbstractController
 
     public function fetch(int $tweet_id): Tweet
     {
-        $this->setHttpRequestMethod('GET');
         $this->setEndpoint('tweets?ids=' . $tweet_id);
+        $this->setHttpRequestMethod('GET');
         return $this;
     }
 
@@ -28,8 +28,8 @@ class Tweet extends AbstractController
      */
     public function create(): Tweet
     {
-        $this->setHttpRequestMethod('POST');
         $this->setEndpoint('tweets');
+        $this->setHttpRequestMethod('POST');
         return $this;
     }
 

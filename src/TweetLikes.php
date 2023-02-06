@@ -92,9 +92,7 @@ class TweetLikes extends AbstractController {
             $query['pagination_token'] = $this->next_page_token;
         }
         $endpoint = parent::constructEndpoint();
-        if (sizeof($query) > 0) {
-            $endpoint .= '?' . http_build_query($query);
-        }
+        if (sizeof($query) > 0) {$endpoint .= '?' . http_build_query($query);}
         return $endpoint;
     }
 }

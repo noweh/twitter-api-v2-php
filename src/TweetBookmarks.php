@@ -59,9 +59,11 @@ class TweetBookmarks extends AbstractController {
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
+        $query = [];
         $endpoint = parent::constructEndpoint();
         if (! is_null($this->next_page_token)) {
-            $endpoint .= '?pagination_token=' . $this->next_page_token;
+            $query['pagination_token'] = $this->next_page_token;
+            $endpoint .= '?' . http_build_query($query);
         }
         return $endpoint;
     }

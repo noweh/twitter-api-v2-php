@@ -43,13 +43,13 @@ class UserBlocks extends AbstractController {
     /**
      * Unblock user by username or ID.
      *
-     * @param int $target_user_id
+     * @param int $user_id
      * @return UserBlocks
      */
-    public function unblock(int $target_user_id): UserBlocks
+    public function unblock(int $user_id): UserBlocks
     {
+        $this->setEndpoint('users/'.$this->account_id.'/blocking/' . $user_id);
         $this->setHttpRequestMethod('DELETE');
-        $this->setEndpoint('users/'.$this->account_id.'/blocking/' . $target_user_id);
         return $this;
     }
 
@@ -59,9 +59,11 @@ class UserBlocks extends AbstractController {
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
+        $query = [];
         $endpoint = parent::constructEndpoint();
         if (! is_null($this->next_page_token)) {
-            $endpoint .= '?pagination_token=' . $this->next_page_token;
+            $query['pagination_token'] = $this->next_page_token;
+            $endpoint .= '?' . http_build_query($query);
         }
         return $endpoint;
     }

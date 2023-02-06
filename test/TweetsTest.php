@@ -66,8 +66,8 @@ class TweetsTest extends AbstractTest
     public function testLikedTweets(): void
     {
         $response = $this->client->tweetLikes()
-            ->getLikedTweets(self::$settings['account_id'])
             ->addMaxResults(self::$pageSize)
+            ->getLikedTweets(self::$settings['account_id'])
             ->performRequest();
 
         assertTrue(is_object($response) && property_exists($response, 'data'));
@@ -82,8 +82,8 @@ class TweetsTest extends AbstractTest
     {
         $tweet_id = 1093540451678851072;
         $response = $this->client->tweetLikes()
-            ->getUsersWhoLiked($tweet_id)
             ->addMaxResults(self::$pageSize)
+            ->getUsersWhoLiked($tweet_id)
             ->performRequest();
         assertTrue(is_object($response));
         if (property_exists($response, 'meta') && $response->meta->result_count > 0) {
