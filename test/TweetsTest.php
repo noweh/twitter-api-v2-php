@@ -6,7 +6,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use function PHPUnit\Framework\assertTrue;
 
-class TweetsTest extends AbstractTest
+class TweetsTest extends BaseTestCase
 {
     /** @var array<string> $keywordFilter parameter for TweetLookup. */
     private static array $keywordFilter = ['php'];

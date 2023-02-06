@@ -6,7 +6,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use function PHPUnit\Framework\assertTrue;
 
-class UsersTest extends AbstractTest
+class UsersTest extends BaseTestCase
 {
     /** @var int $userToBlock block/unblock user ID */
     private static int $userToBlock = 2244994945;

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
 
-abstract class AbstractTest extends TestCase
+abstract class BaseTestCase extends TestCase
 {
     /** @var Client $client */
     protected Client $client;
