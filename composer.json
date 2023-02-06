@@ -2,7 +2,7 @@
   "name": "noweh/twitter-api-v2-php",
   "description": "This library provides methods for sending messages to Twitter and receiving statuses.",
   "keywords": ["twitter", "PHP", "API"],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "type": "library",
   "license": "MIT",
   "authors": [
