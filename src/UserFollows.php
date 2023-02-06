@@ -9,15 +9,6 @@ namespace Noweh\TwitterApi;
  */
 class UserFollows extends AbstractController {
 
-    public const MODES = [
-        'FOLLOWERS' => 'followers',
-        'FOLLOWING' => 'following',
-        'UNFOLLOW' => 'unfollow',
-        'FOLLOW' => 'follow'
-    ];
-
-    private int $target_user_id;
-
     /**
      * @param array<int, string> $settings
      * @throws \Exception
@@ -39,7 +30,7 @@ class UserFollows extends AbstractController {
      */
     public function getFollowers(): UserFollows
     {
-        $this->mode = self::MODES['FOLLOWERS'];
+        $this->setEndpoint('users/'.$this->account_id.'/followers');
         return $this;
     }
 
@@ -49,7 +40,7 @@ class UserFollows extends AbstractController {
      */
     public function getFollowing(): UserFollows
     {
-        $this->mode = self::MODES['FOLLOWING'];
+        $this->setEndpoint('users/'.$this->account_id.'/following');
         return $this;
     }
 
@@ -60,20 +51,19 @@ class UserFollows extends AbstractController {
     public function follow(): UserFollows
     {
         $this->setHttpRequestMethod('POST');
-        $this->mode = self::MODES['FOLLOW'];
+        $this->setEndpoint('users/'.$this->account_id.'/following');
         return $this;
     }
 
     /**
      * Unfollow a user ID
-     * @param int $user_id
+     * @param int $target_user_id
      * @return UserFollows
      */
-    public function unfollow(int $user_id): UserFollows
+    public function unfollow(int $target_user_id): UserFollows
     {
         $this->setHttpRequestMethod('DELETE');
-        $this->mode = self::MODES['UNFOLLOW'];
-        $this->target_user_id = $user_id;
+        $this->setEndpoint('users/'.$this->account_id.'/following/'.$target_user_id);
         return $this;
     }
 
@@ -84,24 +74,9 @@ class UserFollows extends AbstractController {
      */
     protected function constructEndpoint(): string {
         $endpoint = parent::constructEndpoint();
-        switch ($this->mode) {
-            case self::MODES['FOLLOWERS']:
-                $endpoint .= '/followers';
-                break;
-            case self::MODES['FOLLOW']:
-            case self::MODES['FOLLOWING']:
-                $endpoint .= '/following';
-                break;
-            case self::MODES['UNFOLLOW']:
-                $endpoint .= '/following/'.$this->target_user_id;
-                break;
-        }
-
-        // Pagination
         if (! is_null($this->next_page_token)) {
             $endpoint .= '?pagination_token=' . $this->next_page_token;
         }
-
         return $endpoint;
     }
 }

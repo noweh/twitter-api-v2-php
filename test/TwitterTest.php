@@ -27,13 +27,13 @@ class TwitterTest extends TestCase
     private static int $pageSize = 10;
 
     /** @var int $userToFollow follow/unfollow user ID */
-    private static int $userToFollow = 44196397;
+    private static int $userToFollow = 2244994945;
 
     /** @var int $userToBlock block/unblock user ID */
-    private static int $userToBlock = 44196397;
+    private static int $userToBlock = 2244994945;
 
     /** @var int $userToMute mute/unmute user ID */
-    private static int $userToMute = 44196397;
+    private static int $userToMute = 2244994945;
 
     /** @var int $userMentioned mentioned user ID. */
     private static int $userMentioned = 1538300985570885636;

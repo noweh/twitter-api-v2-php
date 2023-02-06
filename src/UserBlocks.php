@@ -29,7 +29,6 @@ class UserBlocks extends AbstractController {
         }
 
         $this->setAuthMode(1);
-        $this->setEndpoint('users/'.$this->account_id.'/blocking');
     }
 
     /**
@@ -38,7 +37,7 @@ class UserBlocks extends AbstractController {
      */
     public function lookup(): UserBlocks
     {
-        $this->mode = self::MODES['LOOKUP'];
+        $this->setEndpoint('users/'.$this->account_id.'/blocking');
         return $this;
     }
 
@@ -49,21 +48,20 @@ class UserBlocks extends AbstractController {
     public function block(): UserBlocks
     {
         $this->setHttpRequestMethod('POST');
-        $this->mode = self::MODES['BLOCK'];
+        $this->setEndpoint('users/'.$this->account_id.'/blocking');
         return $this;
     }
 
     /**
      * Unblock user by username or ID.
      *
-     * @param int $user_id
+     * @param int $target_user_id
      * @return UserBlocks
      */
-    public function unblock(int $user_id): UserBlocks
+    public function unblock(int $target_user_id): UserBlocks
     {
         $this->setHttpRequestMethod('DELETE');
-        $this->mode = self::MODES['UNBLOCK'];
-        $this->target_user_id = $user_id;
+        $this->setEndpoint('users/'.$this->account_id.'/blocking/' . $target_user_id);
         return $this;
     }
 
@@ -73,17 +71,10 @@ class UserBlocks extends AbstractController {
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
-
         $endpoint = parent::constructEndpoint();
-        if ($this->mode == self::MODES['UNBLOCK']) {
-            $endpoint .= '/'.$this->target_user_id;
-        }
-
-        // Pagination
         if (! is_null($this->next_page_token)) {
             $endpoint .= '?pagination_token=' . $this->next_page_token;
         }
-
         return $endpoint;
     }
 }

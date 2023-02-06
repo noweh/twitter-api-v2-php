@@ -9,12 +9,6 @@ namespace Noweh\TwitterApi;
  */
 class UserMutes extends AbstractController {
 
-    public const MODES = [
-        'LOOKUP' => 'lookup',
-        'UNMUTE' => 'unmute',
-        'MUTE' => 'mute'
-    ];
-
     private int $target_user_id;
 
     /**
@@ -27,9 +21,7 @@ class UserMutes extends AbstractController {
         if (!isset($settings['account_id'])) {
             throw new \Exception('Incomplete settings passed. Expected "account_id"');
         }
-
         $this->setAuthMode(1);
-        $this->setEndpoint('users/'.$this->account_id.'/muting');
     }
 
     /**
@@ -38,7 +30,7 @@ class UserMutes extends AbstractController {
      */
     public function lookup(): UserMutes
     {
-        $this->mode = self::MODES['LOOKUP'];
+        $this->setEndpoint('users/'.$this->account_id.'/muting');
         return $this;
     }
 
@@ -48,8 +40,8 @@ class UserMutes extends AbstractController {
      */
     public function mute(): UserMutes
     {
+        $this->setEndpoint('users/'.$this->account_id.'/muting');
         $this->setHttpRequestMethod('POST');
-        $this->mode = self::MODES['MUTE'];
         return $this;
     }
 
@@ -60,9 +52,8 @@ class UserMutes extends AbstractController {
      */
     public function unmute(int $user_id): UserMutes
     {
+        $this->$this->setEndpoint('users/'.$this->account_id.'/muting/'.$user_id);
         $this->setHttpRequestMethod('DELETE');
-        $this->mode = self::MODES['UNMUTE'];
-        $this->target_user_id = $user_id;
         return $this;
     }
 
@@ -72,17 +63,10 @@ class UserMutes extends AbstractController {
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
-
         $endpoint = parent::constructEndpoint();
-        if ($this->mode == self::MODES['UNMUTE']) {
-            $endpoint .= '/'.$this->target_user_id;
-        }
-
-        // Pagination
         if (! is_null($this->next_page_token)) {
             $endpoint .= '?pagination_token=' . $this->next_page_token;
         }
-
         return $endpoint;
     }
 }
