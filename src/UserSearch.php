@@ -15,13 +15,10 @@ class UserSearch extends AbstractController
     ];
 
     /** @var mixed $idOrUsername */
-    private $idOrUsername;
+    private mixed $idOrUsername;
 
     /** @var string $mode */
     protected string $mode = self::MODES['USERNAME'];
-
-    /** @var int $maxResults */
-    private int $maxResults;
 
     /**
      * @param array<int, string> $settings

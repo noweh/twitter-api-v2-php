@@ -15,7 +15,7 @@ class UserMutes extends AbstractController {
         'MUTE' => 'mute'
     ];
 
-    private mixed $idOrUsername;
+    private int $target_user_id;
 
     /**
      * @param array<int, string> $settings
@@ -55,14 +55,14 @@ class UserMutes extends AbstractController {
 
     /**
      * Mute user by username or ID.
-     * @param mixed $user_id
+     * @param int $user_id
      * @return UserMutes
      */
-    public function unmute(mixed $user_id): UserMutes
+    public function unmute(int $user_id): UserMutes
     {
         $this->setHttpRequestMethod('DELETE');
         $this->mode = self::MODES['UNMUTE'];
-        $this->idOrUsername = $user_id;
+        $this->target_user_id = $user_id;
         return $this;
     }
 
@@ -75,7 +75,7 @@ class UserMutes extends AbstractController {
 
         $endpoint = parent::constructEndpoint();
         if ($this->mode == self::MODES['UNMUTE']) {
-            $endpoint .= '/'.$this->idOrUsername;
+            $endpoint .= '/'.$this->target_user_id;
         }
 
         // Pagination

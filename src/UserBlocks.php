@@ -15,7 +15,7 @@ class UserBlocks extends AbstractController {
         'UNBLOCK' => 'unblock'
     ];
 
-    private mixed $idOrUsername;
+    private int $target_user_id;
 
     /**
      * @param array<int, string> $settings
@@ -29,7 +29,7 @@ class UserBlocks extends AbstractController {
         }
 
         $this->setAuthMode(1);
-        $this->setEndpoint('users/'.$this->account_id);
+        $this->setEndpoint('users/'.$this->account_id.'/blocking');
     }
 
     /**
@@ -56,14 +56,14 @@ class UserBlocks extends AbstractController {
     /**
      * Unblock user by username or ID.
      *
-     * @param mixed $user_id
+     * @param int $user_id
      * @return UserBlocks
      */
-    public function unblock(mixed $user_id): UserBlocks
+    public function unblock(int $user_id): UserBlocks
     {
         $this->setHttpRequestMethod('DELETE');
         $this->mode = self::MODES['UNBLOCK'];
-        $this->idOrUsername = $user_id;
+        $this->target_user_id = $user_id;
         return $this;
     }
 
@@ -75,8 +75,8 @@ class UserBlocks extends AbstractController {
     protected function constructEndpoint(): string {
 
         $endpoint = parent::constructEndpoint();
-        if ($this->mode == self::MODES['LOOKUP']) {
-            $endpoint .= '/blocking';
+        if ($this->mode == self::MODES['UNBLOCK']) {
+            $endpoint .= '/'.$this->target_user_id;
         }
 
         // Pagination

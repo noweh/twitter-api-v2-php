@@ -29,6 +29,12 @@ class TwitterTest extends TestCase
     /** @var int $userToFollow follow/unfollow Mr. Elon Musk. */
     private static int $userToFollow = 44196397;
 
+    /** @var int $userToBlock block/unblock Mr. Elon Musk. */
+    private static int $userToBlock = 44196397;
+
+    /** @var int $userToMute mute/unmute Mr. Elon Musk. */
+    private static int $userToMute = 44196397;
+
     /**
      * @throws Exception
      */
@@ -68,6 +74,7 @@ class TwitterTest extends TestCase
         assertTrue(is_object($response));
         assertTrue(property_exists($response, 'data'));
         assertTrue(property_exists($response, 'meta'));
+        self::logTweets($response->data);
     }
 
     /**
@@ -92,10 +99,12 @@ class TwitterTest extends TestCase
     public function testFindMentions(): void
     {
         $response = $this->client->timeline()
-            ->findRecentMentionsForUserId('1538300985570885636')
+            ->findRecentMentionsForUserId(1538300985570885636)
             ->performRequest();
 
         assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        self::logTweets($response->data);
     }
 
     /**
@@ -186,7 +195,7 @@ class TwitterTest extends TestCase
 
     /**
      * Retrieve the users which are following you.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testUserFollowers(): void
     {
@@ -201,7 +210,7 @@ class TwitterTest extends TestCase
 
     /**
      * Retrieve the users which you are following.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testUserFollowing(): void
     {
@@ -216,7 +225,7 @@ class TwitterTest extends TestCase
 
     /**
      * Follow a user.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testUserFollow(): void
     {
@@ -228,7 +237,7 @@ class TwitterTest extends TestCase
 
     /**
      * Unfollow a user.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testUserUnfollow(): void
     {
@@ -236,6 +245,21 @@ class TwitterTest extends TestCase
             ->performRequest();
 
         assertTrue(is_object($response));
+    }
+
+    /** Log tweet nodes to console */
+    private static function logTweets(array $data): void
+    {
+        foreach ($data as $item) {
+            $tweet_id = str_pad($item->id, 20, " ",STR_PAD_LEFT);
+            if (property_exists($item, 'author_id')) {
+                $user_id = str_pad($item->author_id, 20, " ",STR_PAD_LEFT);
+                echo $user_id." $tweet_id \"".str_replace("\n", " ", $item->text)."\"\n";
+            } else {
+                // Mentions
+                echo "$tweet_id \"".str_replace("\n", " ", $item->text)."\"\n";
+            }
+        }
     }
 
     /** Log user nodes to console */

@@ -16,7 +16,7 @@ class UserFollows extends AbstractController {
         'FOLLOW' => 'follow'
     ];
 
-    private mixed $idOrUsername;
+    private int $target_user_id;
 
     /**
      * @param array<int, string> $settings
@@ -66,14 +66,14 @@ class UserFollows extends AbstractController {
 
     /**
      * Unfollow a user ID
-     * @param mixed $user_id
+     * @param int $user_id
      * @return UserFollows
      */
-    public function unfollow(mixed $user_id): UserFollows
+    public function unfollow(int $user_id): UserFollows
     {
         $this->setHttpRequestMethod('DELETE');
         $this->mode = self::MODES['UNFOLLOW'];
-        $this->idOrUsername = $user_id;
+        $this->target_user_id = $user_id;
         return $this;
     }
 
@@ -89,13 +89,11 @@ class UserFollows extends AbstractController {
                 $endpoint .= '/followers';
                 break;
             case self::MODES['FOLLOW']:
-                $endpoint .= '/following';
-                break;
             case self::MODES['FOLLOWING']:
                 $endpoint .= '/following';
                 break;
             case self::MODES['UNFOLLOW']:
-                $endpoint .= '/following/'.$this->idOrUsername;
+                $endpoint .= '/following/'.$this->target_user_id;
                 break;
         }
 

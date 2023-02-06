@@ -42,9 +42,6 @@ class TweetSearch extends AbstractController
     /** @var bool $hasMedias */
     private bool $hasMedias = false;
 
-    /** @var int $maxResults */
-    private int $maxResults;
-
     /**
      * @param array<string> $settings
      * @throws \Exception
