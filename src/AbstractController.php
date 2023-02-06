@@ -101,7 +101,7 @@ abstract class AbstractController
                     'handler' => $stack,
                     'auth' => 'oauth'
                 ]);
-            } else if ($this->auth_mode == 2) { // OAuth 2.0 Authorization Code Flow with PKCE
+            } else if ($this->auth_mode == 2) { // OAuth 2.0 Authorization Code Flow
                 throw new \Exception('OAuth 2.0 Authorization Code Flow had not been implemented & also requires user interaction.');
             }
 

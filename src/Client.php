@@ -80,6 +80,16 @@ class Client
     }
 
     /**
+     * Access to Tweet/Replies endpoints.
+     * @return TweetReplies
+     * @throws \Exception
+     */
+    public function tweetReplies(): TweetReplies
+    {
+        return new TweetReplies($this->settings);
+    }
+
+    /**
      * Access To User/Blocks endpoints.
      * @return UserBlocks
      * @throws \Exception

@@ -15,7 +15,7 @@ class TweetsTest extends BaseTestCase
     private static array $localeFilter = ['en', 'fr', 'de'];
 
     /** @var int $userLiked */
-    private static int $userLiked = 93711247;
+    private static int $replyTweetId = 1622641314255761409;
 
     /**
      * Timeline: Find recent mentions by user ID.
@@ -163,6 +163,37 @@ class TweetsTest extends BaseTestCase
             ->performRequest(['tweet_id' => $tweet_id]);
 
         assertTrue(is_object($response2) && property_exists($response2, 'data'));
+    }
+
+    /**
+     * Replies: Hides a reply to a Tweet.
+     * @throws GuzzleException | Exception
+     */
+    public function testTweetReplyHide(): void
+    {
+        $response = $this->client->tweetReplies()
+            ->hideReply(self::$replyTweetId)
+            ->performRequest(['hidden' => true]);
+
+        assertTrue(is_object($response) && property_exists($response, 'data'));
+        assertTrue(property_exists($response->data, 'hidden'));
+        assertTrue($response->data->hidden);
+    }
+
+    /**
+     *
+     * Replies: Unhides a reply to a Tweet.
+     * @throws GuzzleException | Exception
+     */
+    public function testTweetReplyUnhide(): void
+    {
+        $response = $this->client->tweetReplies()
+            ->hideReply(self::$replyTweetId)
+            ->performRequest(['hidden' => false]);
+
+        assertTrue(is_object($response) && property_exists($response, 'data'));
+        assertTrue(property_exists($response->data, 'hidden'));
+        assertTrue(! $response->data->hidden);
     }
 
     /**
