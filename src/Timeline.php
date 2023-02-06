@@ -34,11 +34,16 @@ class Timeline extends AbstractController
      * Reverse chronological timeline
      * Returns a collection of recent Tweets by you and users you follow.
      * @return Timeline
+     * @throws \Exception
      */
     public function getReverseChronological(): Timeline
     {
+        if (property_exists($this, 'account_id')) {
+            $this->setEndpoint('users/' . $this->account_id . '/timelines/reverse_chronological');
+        } else {
+            throw new \Exception('Incomplete settings passed. Expected "account_id"');
+        }
         $this->setAuthMode(1);
-        $this->setEndpoint('users/' . $this->account_id . '/timelines/reverse_chronological');
         return $this;
     }
 

@@ -134,6 +134,7 @@ abstract class AbstractController
             }
 
             $response  = $client->request($this->getHttpRequestMethod(), $this->constructEndpoint(), [
+                'verify' => !$this->is_windows(), // else composer script will break.
                 'headers' => $headers,
                 // This is always array from function spec, use count to see if data set.
                 // Otherwise, twitter error on empty data.
@@ -161,7 +162,9 @@ abstract class AbstractController
             throw new \Exception($payload->detail, $payload->status);
         }
     }
-
+    private function is_windows(): bool {
+        return DIRECTORY_SEPARATOR === '\\';
+    }
     /**
      * Set Auth-Mode
      *

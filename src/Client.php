@@ -5,24 +5,13 @@ namespace Noweh\TwitterApi;
 class Client
 {
     /**
-     * Twitter settings.
-     *
+     * Twitter API settings.
      * @var array<string>
      */
     protected array $settings = [];
 
-    public const OPERATORS = [
-        'OR' => 'OR',
-        'AND' => ''
-    ];
-
-    public const MODES = [
-        'ID' => 'id',
-        'USERNAME' => 'username'
-    ];
-
     /**
-     * Client initialization
+     * Client initialization.
      * @param array<string> $settings
      */
     public function __construct(array $settings)
@@ -31,7 +20,7 @@ class Client
     }
 
     /**
-     * Access to Retweet endpoints
+     * Access to Retweet endpoints.
      * @return Retweet
      * @throws \Exception
      */
@@ -41,7 +30,7 @@ class Client
     }
 
     /**
-     * Access to Timeline endpoints
+     * Access to Timeline endpoints.
      * @return Timeline
      * @throws \Exception
      */
@@ -51,7 +40,7 @@ class Client
     }
 
     /**
-     * Access to Tweet endpoints
+     * Access to Tweet endpoints.
      * @return Tweet
      * @throws \Exception
      */
@@ -61,7 +50,7 @@ class Client
     }
 
     /**
-     * Access to Tweet/Lookup endpoints
+     * Access to Tweet/Lookup endpoints.
      * @return TweetLookup
      * @throws \Exception
      */
@@ -71,17 +60,7 @@ class Client
     }
 
     /**
-     * Access To User/Lookup endpoints
-     * @return UserLookup
-     * @throws \Exception
-     */
-    public function userLookup(): UserLookup
-    {
-        return new UserLookup($this->settings);
-    }
-
-    /**
-     * Access To User/Blocks endpoints
+     * Access To User/Blocks endpoints.
      * @return UserBlocks
      * @throws \Exception
      */
@@ -91,7 +70,7 @@ class Client
     }
 
     /**
-     * Access To User/Follows endpoints
+     * Access To User/Follows endpoints.
      * @return UserBlocks
      * @throws \Exception
      */
@@ -101,7 +80,17 @@ class Client
     }
 
     /**
-     * Access To User/Mutes endpoints
+     * Access To User/Lookup endpoints.
+     * @return UserLookup
+     * @throws \Exception
+     */
+    public function userLookup(): UserLookup
+    {
+        return new UserLookup($this->settings);
+    }
+
+    /**
+     * Access To User/Mutes endpoints.
      * @return UserMutes
      * @throws \Exception
      */

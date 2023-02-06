@@ -11,25 +11,36 @@
     "ext-curl": "*",
     "ext-json": "*",
     "php": ">=7.4",
-    "guzzlehttp/guzzle": "^7.4",
-    "guzzlehttp/oauth-subscriber": "^0.6"
+    "guzzlehttp/guzzle": "^6.5.8",
+    "guzzlehttp/oauth-subscriber": "^0.6.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5",
-    "vlucas/phpdotenv": "^5.3",
-    "phpstan/phpstan": "^1.2.0"
+    "phpunit/phpunit": "^9.6.2",
+    "vlucas/phpdotenv": "^v5.5.0",
+    "phpstan/phpstan": "^1.9.14"
   },
   "license": "MIT",
   "authors": [
     {
       "name": "Julien Schmitt",
       "email": "jschmitt95@protonmail.com"
+    }, {
+      "name": "Martin Zeitler",
+      "homepage": "https://github.com/syslogic"
     }
   ],
   "autoload": {
     "psr-4": {
       "Noweh\\TwitterApi\\": "src/"
     }
+  },
+  "scripts": {
+    "coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main",
+    "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main"
+  },
+  "scripts-descriptions": {
+    "coverage": "Run PHPunit tests with code coverage (Linux)",
+    "test": "Run PHPunit tests"
   },
   "minimum-stability": "dev"
 }

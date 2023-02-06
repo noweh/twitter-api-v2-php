@@ -9,14 +9,6 @@ namespace Noweh\TwitterApi;
  */
 class UserBlocks extends AbstractController {
 
-    public const MODES = [
-        'LOOKUP' => 'lookup',
-        'BLOCK' => 'block',
-        'UNBLOCK' => 'unblock'
-    ];
-
-    private int $target_user_id;
-
     /**
      * @param array<int, string> $settings
      * @throws \Exception
@@ -24,10 +16,9 @@ class UserBlocks extends AbstractController {
     public function __construct(array $settings)
     {
         parent::__construct($settings);
-        if (!isset($settings['account_id'])) {
+        if (! property_exists($this, 'account_id')) {
             throw new \Exception('Incomplete settings passed. Expected "account_id"');
         }
-
         $this->setAuthMode(1);
     }
 
