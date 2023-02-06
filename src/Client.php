@@ -99,4 +99,14 @@ class Client
     {
         return new UserFollows($this->settings);
     }
+
+    /**
+     * Access To User/Mutes endpoints
+     * @return UserMutes
+     * @throws \Exception
+     */
+    public function userMutes(): UserMutes
+    {
+        return new UserMutes($this->settings);
+    }
 }

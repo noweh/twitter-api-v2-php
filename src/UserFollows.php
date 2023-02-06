@@ -39,7 +39,6 @@ class UserFollows extends AbstractController {
      */
     public function getFollowers(): UserFollows
     {
-        $this->setAuthMode(1);
         $this->mode = self::MODES['FOLLOWERS'];
         return $this;
     }
@@ -50,32 +49,27 @@ class UserFollows extends AbstractController {
      */
     public function getFollowing(): UserFollows
     {
-        $this->setAuthMode(1);
         $this->mode = self::MODES['FOLLOWING'];
         return $this;
     }
 
     /**
      * Follow a user ID
-     * @param mixed $user_id
      * @return UserFollows
      */
-    public function follow(mixed $user_id): UserFollows
+    public function follow(): UserFollows
     {
-        $this->setAuthMode(1);
-        $this->idOrUsername = $user_id;
         $this->mode = self::MODES['FOLLOW'];
         return $this;
     }
 
     /**
-     * Follow a user ID
+     * Unfollow a user ID
      * @param mixed $user_id
      * @return UserFollows
      */
     public function unfollow(mixed $user_id): UserFollows
     {
-        $this->setAuthMode(1);
         $this->idOrUsername = $user_id;
         $this->mode = self::MODES['UNFOLLOW'];
         return $this;
@@ -83,7 +77,7 @@ class UserFollows extends AbstractController {
 
     /**
      * Retrieve Endpoint value and rebuilt it with the expected parameters
-     * @return string
+     * @return string the URL for the request.
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
@@ -93,6 +87,8 @@ class UserFollows extends AbstractController {
                 $endpoint .= '/followers';
                 break;
             case self::MODES['FOLLOW']:
+                $endpoint .= '/following';
+                break;
             case self::MODES['FOLLOWING']:
                 $endpoint .= '/following';
                 break;

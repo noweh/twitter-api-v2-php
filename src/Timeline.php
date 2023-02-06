@@ -27,11 +27,12 @@ class Timeline extends AbstractController
 
     /**
      * Retrieve Endpoint value and rebuilt it with the expected parameters
-     * @return string
+     * @return string the URL for the request.
      * @throws \Exception
      */
     protected function constructEndpoint(): string {
         $endpoint = parent::constructEndpoint();
+
         // Pagination
         if (! is_null($this->next_page_token)) {
             $endpoint .= '?pagination_token=' . $this->next_page_token;

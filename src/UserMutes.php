@@ -3,16 +3,16 @@
 namespace Noweh\TwitterApi;
 
 /**
- * Class User/Blocks Controller
- * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/blocks/api-reference/get-users-blocking">Blocks</a>
+ * Class User/Mutes Controller
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/mutes/introduction">Mutes</a>
  * @author Martin Zeitler
  */
-class UserBlocks extends AbstractController {
+class UserMutes extends AbstractController {
 
     public const MODES = [
         'LOOKUP' => 'lookup',
-        'BLOCK' => 'block',
-        'UNBLOCK' => 'unblock'
+        'UNMUTE' => 'unmute',
+        'MUTE' => 'mute'
     ];
 
     private mixed $idOrUsername;
@@ -29,40 +29,39 @@ class UserBlocks extends AbstractController {
         }
 
         $this->setAuthMode(1);
-        $this->setEndpoint('users/'.$this->account_id);
+        $this->setEndpoint('users/'.$this->account_id.'/muting');
     }
 
     /**
-     * Look up blocked users.
-     * @return UserBlocks
+     * Look up muted users.
+     * @return UserMutes
      */
-    public function lookup(): UserBlocks
+    public function lookup(): UserMutes
     {
         $this->mode = self::MODES['LOOKUP'];
         return $this;
     }
 
     /**
-     * Block user by username or ID.
+     * Mute user by username or ID.
      * @param mixed $idOrUsername can be an array of items
-     * @return UserBlocks
+     * @return UserMutes
      */
-    public function block(mixed $idOrUsername): UserBlocks
+    public function mute(mixed $idOrUsername): UserMutes
     {
-        $this->mode = self::MODES['BLOCK'];
+        $this->mode = self::MODES['MUTE'];
         $this->idOrUsername = $idOrUsername;
         return $this;
     }
 
     /**
-     * Unblock user by username or ID.
-     *
+     * Mute user by username or ID.
      * @param mixed $idOrUsername can be an array of items
-     * @return UserBlocks
+     * @return UserMutes
      */
-    public function unblock(mixed $idOrUsername): UserBlocks
+    public function unmute(mixed $idOrUsername): UserMutes
     {
-        $this->mode = self::MODES['UNBLOCK'];
+        $this->mode = self::MODES['UNMUTE'];
         $this->idOrUsername = $idOrUsername;
         return $this;
     }
@@ -75,8 +74,8 @@ class UserBlocks extends AbstractController {
     protected function constructEndpoint(): string {
 
         $endpoint = parent::constructEndpoint();
-        if ($this->mode == self::MODES['LOOKUP']) {
-            $endpoint .= '/blocking';
+        if ($this->mode == self::MODES['UNMUTE']) {
+            $endpoint .= '/'.$this->idOrUsername;
         }
 
         // Pagination

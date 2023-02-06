@@ -15,22 +15,34 @@ class TwitterTest extends TestCase
     /** @var array $settings */
     private static array $settings = [];
 
+    /** @var array $keywordFilter parameter for TweetSearch. */
+    private static array $keywordFilter = ['php'];
+
+    /** @var array $localeFilter parameter for TweetSearch. */
+    private static array $localeFilter = ['en', 'fr', 'de'];
+
+    /** @var int $pageSize parameter for TweetSearch. */
     private static int $pageSize = 25;
+
+    /** @var int $userToFollow follow/unfollow Mr. Elon Musk. */
+    private static int $userToFollow = 44196397;
 
     /**
      * @throws \Exception
      */
     public function setUp(): void
     {
-        // may lead to Exception : Incomplete settings passed.
+        // Error : Class "Dotenv\Dotenv" not found.
         if (class_exists('Dotenv')) {
             $dotenv = Dotenv::createUnsafeImmutable(__DIR__.'/config', '.env');
             $dotenv->safeLoad();
         }
 
-        foreach (getenv() as $settingKey => $settingValue) {
-            if (strpos($settingKey, 'TWITTER_') === 0) {
-                self::$settings[str_replace('twitter_', '', mb_strtolower($settingKey))] = $settingValue;
+        // Initialize from environmental variables.
+        foreach (getenv() as $key => $value) {
+            if (str_starts_with($key, 'TWITTER_')) {
+                $name = str_replace('twitter_', '', mb_strtolower($key));
+                self::$settings[$name] = $value;
             }
         }
 
@@ -44,8 +56,8 @@ class TwitterTest extends TestCase
     public function testSearchTweets(): void
     {
         $response = $this->client->tweetSearch()
-            ->addFilterOnKeywordOrPhrase(['php'])
-            ->addFilterOnLocales(['fr', 'en'])
+            ->addFilterOnKeywordOrPhrase(self::$keywordFilter)
+            ->addFilterOnLocales(self::$localeFilter)
             ->addMaxResults(self::$pageSize)
             ->showUserDetails()
             ->showMetrics()
@@ -106,10 +118,9 @@ class TwitterTest extends TestCase
      */
     public function testRetweet(): void
     {
-        $response = $this->client
-            ->tweetSearch()
-            ->addFilterOnKeywordOrPhrase(['php'])
-            ->addFilterOnLocales(['fr', 'en'])
+        $response = $this->client->tweetSearch()
+            ->addFilterOnKeywordOrPhrase(self::$keywordFilter)
+            ->addFilterOnLocales(self::$localeFilter)
             ->addMaxResults(self::$pageSize)
             ->showUserDetails()
             ->showMetrics()
@@ -121,11 +132,8 @@ class TwitterTest extends TestCase
 
         // Retweet by random index
         $tweet_id = $response->data[rand(0, self::$pageSize-1)]->id;
-        $response2 = $this->client
-            ->retweet()
-            ->performRequest(
-                'POST', ['tweet_id' => $tweet_id]
-            );
+        $response2 = $this->client->retweet()
+            ->performRequest('POST', ['tweet_id' => $tweet_id]);
 
         assertTrue(is_object($response2));
     }
@@ -148,8 +156,7 @@ class TwitterTest extends TestCase
      */
     public function testUserBlocks(): void
     {
-        $response = $this->client->userBlocks()
-            ->lookup()
+        $response = $this->client->userBlocks()->lookup()
             ->performRequest();
 
         assertTrue(is_object($response));
@@ -164,8 +171,7 @@ class TwitterTest extends TestCase
      */
     public function testUserFollowers(): void
     {
-        $response = $this->client->userFollows()
-            ->getFollowers()
+        $response = $this->client->userFollows()->getFollowers()
             ->performRequest();
 
         assertTrue(is_object($response));
@@ -180,8 +186,46 @@ class TwitterTest extends TestCase
      */
     public function testUserFollowing(): void
     {
-        $response = $this->client->userFollows()
-            ->getFollowing()
+        $response = $this->client->userFollows()->getFollowing()
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        assertTrue(property_exists($response, 'meta'));
+        self::logUsers($response->data);
+    }
+
+    /**
+     * Follow a user.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     */
+    public function testUserFollow(): void
+    {
+        $response = $this->client->userFollows()->follow()
+            ->performRequest('POST', ['target_user_id' => self::$userToFollow]);
+
+        assertTrue(is_object($response));
+    }
+
+    /**
+     * Unfollow a user.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     */
+    public function testUserUnfollow(): void
+    {
+        $response = $this->client->userFollows()->unfollow(self::$userToFollow)
+            ->performRequest('DELETE');
+
+        assertTrue(is_object($response));
+    }
+
+    /**
+     * Retrieve the users which you've muted'.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     */
+    public function testUserMutes(): void
+    {
+        $response = $this->client->userMutes()->lookup()
             ->performRequest();
 
         assertTrue(is_object($response));

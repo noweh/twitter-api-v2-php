@@ -2,6 +2,11 @@
 
 namespace Noweh\TwitterApi;
 
+/**
+ * Class User/Search Controller
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/lookup/introduction">Users lookup</a>
+ * @author Julien Schmitt
+ */
 class UserSearch extends AbstractController
 {
     public const MODES = [
@@ -45,9 +50,8 @@ class UserSearch extends AbstractController
 
     /**
      * Retrieve Endpoint value and rebuilt it with the expected parameters
-     * @return string
-     * @throws \JsonException
-     * @throws \Exception
+     * @return string the URL for the request.
+     * @throws \JsonException | \Exception
      */
     protected function constructEndpoint(): string
     {

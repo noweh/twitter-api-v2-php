@@ -9,8 +9,15 @@ use GuzzleHttp\HandlerStack;
 
 abstract class AbstractController
 {
-    /** @const string API_BASE_URI */
+    /** @const API_BASE_URI */
     private const API_BASE_URI = 'https://api.twitter.com/2/';
+
+    /**
+     * @const API_METHODS
+     * TODO: The HTTP method could be defined from within child controllers,
+     *       in order not having to pass the method with ->performRequest().
+     */
+    protected const API_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
     /**
      * @var int $auth_mode API Auth Mode
@@ -19,40 +26,26 @@ abstract class AbstractController
      */
     protected int $auth_mode = 0;
 
-    /**
-     * @var int $account_id OAuth1 User ID
-     */
+    /** @var int $account_id OAuth1 User ID */
     protected int $account_id;
 
-    /**
-     * @var string
-     */
-    private $access_token;
+    /** @var string */
+    private string $access_token;
 
-    /**
-     * @var string
-     */
-    private $access_token_secret;
+    /** @var string */
+    private string $access_token_secret;
 
-    /**
-     * @var string
-     */
-    private $consumer_key;
+    /** @var string */
+    private string $consumer_key;
 
-    /**
-     * @var string
-     */
-    private $consumer_secret;
+    /** @var string */
+    private string $consumer_secret;
 
-    /**
-     * @var string
-     */
-    private $bearer_token;
+    /** @var string */
+    private string $bearer_token;
 
-    /**
-     * @var string $endpoint
-     */
-    private $endpoint = '';
+    /** @var string $endpoint */
+    private string $endpoint = '';
 
     /** @var string|null $next_page_token Next Page Token for API pagination. */
     protected string|null $next_page_token = null;
@@ -115,7 +108,7 @@ abstract class AbstractController
                 // Inject the Bearer token header
                 $client = new Client(['base_uri' => self::API_BASE_URI]);
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
-                
+
                 // if GET method with id set, fetch tweet with id
                 if (is_array($postData) && isset($postData['id']) && is_numeric($postData['id'])) {
                     $this->endpoint .= '/'.$postData['id'];

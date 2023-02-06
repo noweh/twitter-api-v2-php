@@ -178,7 +178,7 @@ class TweetSearch extends AbstractController
 
     /**
      * Retrieve Endpoint value and rebuilt it with the expected parameters
-     * @return string
+     * @return string the URL for the request.
      * @throws \JsonException
      * @throws \Exception
      */
