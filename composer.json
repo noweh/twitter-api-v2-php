@@ -1,25 +1,9 @@
 {
   "name": "noweh/twitter-api-v2-php",
-  "description": "This library provide methods for sending messages to Twitter and receiving statuses.",
+  "description": "This library provides methods for sending messages to Twitter and receiving statuses.",
+  "keywords": ["twitter", "PHP", "API"],
   "minimum-stability": "dev",
   "type": "library",
-  "keywords": [
-    "twitter",
-    "PHP",
-    "API"
-  ],
-  "require": {
-    "ext-curl": "*",
-    "ext-json": "*",
-    "php": ">=7.4",
-    "guzzlehttp/guzzle": "^6.5.8",
-    "guzzlehttp/oauth-subscriber": "^0.6.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.6.3",
-    "vlucas/phpdotenv": "^v5.5.0",
-    "phpstan/phpstan": "^1.9.14"
-  },
   "license": "MIT",
   "authors": [
     {
@@ -30,6 +14,24 @@
       "homepage": "https://github.com/syslogic"
     }
   ],
+  "require": {
+    "ext-curl": "*",
+    "ext-json": "*",
+    "php": ">=7.4",
+    "guzzlehttp/guzzle": "^7.5.0",
+    "guzzlehttp/oauth-subscriber": "^0.6.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6.3",
+    "vlucas/phpdotenv": "^v5.5.0",
+    "phpstan/phpstan": "^1.9.14"
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main"
+  },
+  "scripts-descriptions": {
+    "test": "Run PHPunit tests"
+  },
   "autoload": {
     "psr-4": {
       "Noweh\\TwitterApi\\": "src/"
@@ -37,15 +39,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Noweh\\TwitterApi\\Test\\": "test"
+      "Noweh\\TwitterApi\\Test\\": "test/"
     }
-  },
-  "scripts": {
-    "coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main",
-    "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main"
-  },
-  "scripts-descriptions": {
-    "coverage": "Run PHPunit tests with code coverage (Linux)",
-    "test": "Run PHPunit tests"
   }
 }
