@@ -44,25 +44,25 @@ class UserMutes extends AbstractController {
 
     /**
      * Mute user by username or ID.
-     * @param mixed $idOrUsername can be an array of items
      * @return UserMutes
      */
-    public function mute(mixed $idOrUsername): UserMutes
+    public function mute(): UserMutes
     {
+        $this->setHttpRequestMethod('POST');
         $this->mode = self::MODES['MUTE'];
-        $this->idOrUsername = $idOrUsername;
         return $this;
     }
 
     /**
      * Mute user by username or ID.
-     * @param mixed $idOrUsername can be an array of items
+     * @param mixed $user_id
      * @return UserMutes
      */
-    public function unmute(mixed $idOrUsername): UserMutes
+    public function unmute(mixed $user_id): UserMutes
     {
+        $this->setHttpRequestMethod('DELETE');
         $this->mode = self::MODES['UNMUTE'];
-        $this->idOrUsername = $idOrUsername;
+        $this->idOrUsername = $user_id;
         return $this;
     }
 

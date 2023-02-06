@@ -68,7 +68,6 @@ class TweetSearch extends AbstractController
         if (in_array($operator, self::OPERATORS, true)) {
             $this->operatorOnFilteredUsernamesFrom = $operator;
         }
-
         return $this;
     }
 
@@ -85,7 +84,6 @@ class TweetSearch extends AbstractController
         if (in_array($operator, self::OPERATORS, true)) {
             $this->operatorOnFilteredUsernamesTo = $operator;
         }
-
         return $this;
     }
 
@@ -101,7 +99,6 @@ class TweetSearch extends AbstractController
         if (in_array($operator, self::OPERATORS, true)) {
             $this->operatorOnFilteredKeywords = $operator;
         }
-
         return $this;
     }
 
@@ -114,7 +111,6 @@ class TweetSearch extends AbstractController
     public function addFilterOnConversationId(string $conversationId): TweetSearch
     {
         $this->filteredConversationId = $conversationId;
-
         return $this;
     }
 

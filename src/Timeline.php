@@ -8,7 +8,7 @@ class Timeline extends AbstractController
      * @param string $userId
      * @return Timeline
      */
-    public function findRecentMentioningForUserId(string $userId): Timeline
+    public function findRecentMentionsForUserId(string $userId): Timeline
     {
         $this->setEndpoint('users/' . $userId . '/mentions');
 

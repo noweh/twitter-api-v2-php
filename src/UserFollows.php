@@ -59,6 +59,7 @@ class UserFollows extends AbstractController {
      */
     public function follow(): UserFollows
     {
+        $this->setHttpRequestMethod('POST');
         $this->mode = self::MODES['FOLLOW'];
         return $this;
     }
@@ -70,8 +71,9 @@ class UserFollows extends AbstractController {
      */
     public function unfollow(mixed $user_id): UserFollows
     {
-        $this->idOrUsername = $user_id;
+        $this->setHttpRequestMethod('DELETE');
         $this->mode = self::MODES['UNFOLLOW'];
+        $this->idOrUsername = $user_id;
         return $this;
     }
 

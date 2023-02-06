@@ -50,7 +50,10 @@ abstract class AbstractController
     /** @var string|null $next_page_token Next Page Token for API pagination. */
     protected string|null $next_page_token = null;
 
-    /** @var string $mode */
+    /** @var string $mode mode of operation */
+    private string $http_request_method = 'GET';
+
+    /** @var string $mode mode of operation */
     protected string $mode;
 
     /**
@@ -88,14 +91,13 @@ abstract class AbstractController
 
     /**
      * Perform the request to Twitter API
-     * @param string $method
      * @param array<string, mixed> $postData
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
      * @throws \Exception
      */
-    public function performRequest(string $method = 'GET', array $postData = []): mixed
+    public function performRequest(array $postData = []): mixed
     {
         try {
             $headers = [
@@ -109,7 +111,7 @@ abstract class AbstractController
                 $client = new Client(['base_uri' => self::API_BASE_URI]);
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
 
-                // if GET method with id set, fetch tweet with id
+                // if GET method with id set, fetch tweet with id ??
                 if (is_array($postData) && isset($postData['id']) && is_numeric($postData['id'])) {
                     $this->endpoint .= '/'.$postData['id'];
                     // unset to avoid clash later.
@@ -133,7 +135,7 @@ abstract class AbstractController
                 ]);
             }
 
-            $response  = $client->request($method, $this->constructEndpoint(), [
+            $response  = $client->request($this->getHttpRequestMethod(), $this->constructEndpoint(), [
                 'headers' => $headers,
                 // This is always array from function spec, use count to see if data set.
                 // Otherwise, twitter error on empty data.
@@ -164,7 +166,7 @@ abstract class AbstractController
     }
 
     /**
-     * Set Auth-Mode value
+     * Set Auth-Mode
      *
      * @param int $value 0 use Bearer token.
      *                   1 use OAuth1 token.
@@ -194,9 +196,35 @@ abstract class AbstractController
         return $this->endpoint;
     }
 
+    /**
+     * Set Pagination Token
+     * @param string $value
+     * @return AbstractController
+     */
     public function setPaginationToken(string $value): AbstractController
     {
         $this->next_page_token = $value;
         return $this;
+    }
+
+    /**
+     * Set HTTP Request Method
+     * @param string $value
+     * @return void
+     */
+    protected function setHttpRequestMethod(string $value): void
+    {
+        if (in_array($value, self::API_METHODS)) {
+            $this->http_request_method = $value;
+        }
+    }
+
+    /**
+     * Get HTTP Request Method
+     * @return string
+     */
+    private function getHttpRequestMethod(): string
+    {
+        return $this->http_request_method;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Noweh\TwitterApi\Test;
 
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
@@ -28,7 +30,7 @@ class TwitterTest extends TestCase
     private static int $userToFollow = 44196397;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function setUp(): void
     {
@@ -51,7 +53,7 @@ class TwitterTest extends TestCase
 
     /**
      * Lookup Tweets by Keyword.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testSearchTweets(): void
     {
@@ -70,7 +72,7 @@ class TwitterTest extends TestCase
 
     /**
      * Lookup an User
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testSearchUsers(): void
     {
@@ -79,16 +81,18 @@ class TwitterTest extends TestCase
             ->performRequest();
 
         assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        self::logUsers([$response->data]);
     }
 
     /**
      * Find mentions by user ID.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testFindMentions(): void
     {
         $response = $this->client->timeline()
-            ->findRecentMentioningForUserId('1538300985570885636')
+            ->findRecentMentionsForUserId('1538300985570885636')
             ->performRequest();
 
         assertTrue(is_object($response));
@@ -96,13 +100,13 @@ class TwitterTest extends TestCase
 
     /**
      * Share Tweet
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testTweet(): void
     {
         $date = new \DateTime('NOW');
         $response = $this->client->tweet()
-            ->performRequest('POST', [
+            ->performRequest([
                 'text' => 'BIP BIP BIP... ' . $date->format(\DateTimeInterface::ATOM) .
                     ' Wake up! A new commit is on github (noweh/twitter-api-v2-php)...'
 
@@ -114,7 +118,7 @@ class TwitterTest extends TestCase
 
     /**
      * Retweet a random Tweet.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testRetweet(): void
     {
@@ -133,30 +137,45 @@ class TwitterTest extends TestCase
         // Retweet by random index
         $tweet_id = $response->data[rand(0, self::$pageSize-1)]->id;
         $response2 = $this->client->retweet()
-            ->performRequest('POST', ['tweet_id' => $tweet_id]);
+            ->performRequest(['tweet_id' => $tweet_id]);
 
         assertTrue(is_object($response2));
     }
 
     /**
      * Retrieve Tweets by user ID.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testFetchTweet(): void
     {
-        $response = $this->client->tweet()
-            ->performRequest('POST', ['ids' => self::$settings['account_id']]);
+        $response = $this->client->timeline()
+            ->performRequest(['ids' => self::$settings['account_id']]);
 
         assertTrue(is_object($response));
     }
 
     /**
      * Retrieve the users which you've blocked.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
+     * @throws GuzzleException | Exception
      */
     public function testUserBlocks(): void
     {
         $response = $this->client->userBlocks()->lookup()
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        assertTrue(property_exists($response, 'meta'));
+        self::logUsers($response->data);
+    }
+
+    /**
+     * Retrieve the users which you've muted.
+     * @throws GuzzleException | Exception
+     */
+    public function testUserMutes(): void
+    {
+        $response = $this->client->userMutes()->lookup()
             ->performRequest();
 
         assertTrue(is_object($response));
@@ -202,7 +221,7 @@ class TwitterTest extends TestCase
     public function testUserFollow(): void
     {
         $response = $this->client->userFollows()->follow()
-            ->performRequest('POST', ['target_user_id' => self::$userToFollow]);
+            ->performRequest(['target_user_id' => self::$userToFollow]);
 
         assertTrue(is_object($response));
     }
@@ -214,24 +233,9 @@ class TwitterTest extends TestCase
     public function testUserUnfollow(): void
     {
         $response = $this->client->userFollows()->unfollow(self::$userToFollow)
-            ->performRequest('DELETE');
-
-        assertTrue(is_object($response));
-    }
-
-    /**
-     * Retrieve the users which you've muted'.
-     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
-     */
-    public function testUserMutes(): void
-    {
-        $response = $this->client->userMutes()->lookup()
             ->performRequest();
 
         assertTrue(is_object($response));
-        assertTrue(property_exists($response, 'data'));
-        assertTrue(property_exists($response, 'meta'));
-        self::logUsers($response->data);
     }
 
     /** Log user nodes to console */

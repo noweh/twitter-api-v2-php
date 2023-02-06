@@ -44,26 +44,26 @@ class UserBlocks extends AbstractController {
 
     /**
      * Block user by username or ID.
-     * @param mixed $idOrUsername can be an array of items
      * @return UserBlocks
      */
-    public function block(mixed $idOrUsername): UserBlocks
+    public function block(): UserBlocks
     {
+        $this->setHttpRequestMethod('POST');
         $this->mode = self::MODES['BLOCK'];
-        $this->idOrUsername = $idOrUsername;
         return $this;
     }
 
     /**
      * Unblock user by username or ID.
      *
-     * @param mixed $idOrUsername can be an array of items
+     * @param mixed $user_id
      * @return UserBlocks
      */
-    public function unblock(mixed $idOrUsername): UserBlocks
+    public function unblock(mixed $user_id): UserBlocks
     {
+        $this->setHttpRequestMethod('DELETE');
         $this->mode = self::MODES['UNBLOCK'];
-        $this->idOrUsername = $idOrUsername;
+        $this->idOrUsername = $user_id;
         return $this;
     }
 

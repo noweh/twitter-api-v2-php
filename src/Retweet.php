@@ -16,7 +16,8 @@ class Retweet extends AbstractController
             throw new \Exception('Incomplete settings passed. Expected "account_id"');
         }
 
-        $this->setAuthMode(1);
+        $this->setHttpRequestMethod('POST');
         $this->setEndpoint('users/' . $settings['account_id'] . '/retweets');
+        $this->setAuthMode(1);
     }
 }
