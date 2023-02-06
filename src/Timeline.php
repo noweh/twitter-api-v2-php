@@ -33,13 +33,12 @@ class Timeline extends AbstractController
     /**
      * Reverse chronological timeline
      * Returns a collection of recent Tweets by you and users you follow.
-     * @param int $user_id
      * @return Timeline
      */
-    public function getReverseChronological(int $user_id): Timeline
+    public function getReverseChronological(): Timeline
     {
         $this->setAuthMode(1);
-        $this->setEndpoint('users/' . $user_id . '/timelines/reverse_chronological');
+        $this->setEndpoint('users/' . $this->account_id . '/timelines/reverse_chronological');
         return $this;
     }
 
@@ -50,8 +49,6 @@ class Timeline extends AbstractController
      */
     protected function constructEndpoint(): string {
         $endpoint = parent::constructEndpoint();
-
-        // Pagination
         if (! is_null($this->next_page_token)) {
             $endpoint .= '?pagination_token=' . $this->next_page_token;
         }
