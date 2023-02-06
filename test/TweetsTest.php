@@ -8,6 +8,12 @@ use function PHPUnit\Framework\assertTrue;
 
 class TweetsTest extends AbstractTest
 {
+    /** @var array $keywordFilter parameter for TweetLookup. */
+    private static array $keywordFilter = ['php'];
+
+    /** @var array $localeFilter parameter for TweetLookup. */
+    private static array $localeFilter = ['en', 'fr', 'de'];
+
     /** @var int $userMentioned mentioned user ID. */
     private static int $userMentioned = 1538300985570885636;
 

@@ -23,14 +23,19 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^9.6.3",
+    "phpunit/php-code-coverage": "^9.2.24",
     "vlucas/phpdotenv": "^v5.5.0",
     "phpstan/phpstan": "^1.9.14"
   },
   "scripts": {
-    "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main"
+    "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main",
+    "coverage_linux": "export XDEBUG_MODE=coverage && vendor/bin/phpunit --bootstrap vendor/autoload.php --coverage-html --configuration coverage.xml --testsuite main",
+    "coverage_windows": "setlocal xdebug.mode=coverage && %cd%/vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration coverage.xml --testsuite main"
   },
   "scripts-descriptions": {
-    "test": "Run PHPunit tests"
+    "test": "Run PHPUnit tests",
+    "coverage_linux": "Run PHPUnit tests with code coverage on Linux",
+    "coverage_windows": "Run PHPUnit tests with code coverage on Windows"
   },
   "autoload": {
     "psr-4": {

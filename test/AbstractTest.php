@@ -15,12 +15,6 @@ abstract class AbstractTest extends TestCase
     /** @var array $settings */
     private static array $settings = [];
 
-    /** @var array $keywordFilter parameter for TweetLookup. */
-    protected static array $keywordFilter = ['php'];
-
-    /** @var array $localeFilter parameter for TweetLookup. */
-    protected static array $localeFilter = ['en', 'fr', 'de'];
-
     /** @var int $pageSize */
     protected static int $pageSize = 10;
 

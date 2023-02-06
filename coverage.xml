@@ -6,12 +6,24 @@
         verbose="true"
         colors="true">
 
-    <php/>
-
     <testsuites>
         <testsuite name="main">
             <directory>test</directory>
         </testsuite>
     </testsuites>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <report>
+            <html outputDirectory="./coverage" lowUpperBound="35" highLowerBound="70"/>
+            <text outputFile="php://stdout" showUncoveredFiles="true"/>
+        </report>
+    </coverage>
+
+    <logging>
+        <testdoxHtml outputFile="./coverage/testdox.html"/>
+    </logging>
 
 </phpunit>
