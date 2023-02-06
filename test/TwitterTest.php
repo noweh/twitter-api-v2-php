@@ -61,13 +61,43 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Find mentions by user ID.
+     * Timeline: Find recent mentions by user ID.
      * @throws GuzzleException | Exception
      */
-    public function testFindMentions(): void
+    public function testTimelineRecentMentions(): void
     {
         $response = $this->client->timeline()
-            ->findRecentMentionsForUserId(self::$userMentioned)
+            ->getRecentMentions(self::$userMentioned)
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        self::logTweets($response->data);
+    }
+
+    /**
+     * Timeline: Find recent tweets by user ID.
+     * @throws GuzzleException | Exception
+     */
+    public function testTimelineRecentTweets(): void
+    {
+        $response = $this->client->timeline()
+            ->getRecentTweets(self::$userMentioned)
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        self::logTweets($response->data);
+    }
+
+    /**
+     * Timeline: Reverse Chronological Timeline by user ID.
+     * @throws GuzzleException | Exception
+     */
+    public function testTimelineReverseChronological(): void
+    {
+        $response = $this->client->timeline()
+            ->getReverseChronological((int) self::$settings['account_id'])
             ->performRequest();
 
         assertTrue(is_object($response));

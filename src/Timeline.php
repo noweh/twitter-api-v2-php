@@ -2,25 +2,44 @@
 
 namespace Noweh\TwitterApi;
 
+// https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference
+
 class Timeline extends AbstractController
 {
     /**
-     * @param int $userId
+     * User mention timeline
+     * Returns most recent Tweets mentioning a specified user ID
+     * @param int $user_id
      * @return Timeline
      */
-    public function findRecentMentionsForUserId(int $userId): Timeline
+    public function getRecentMentions(int $user_id): Timeline
     {
-        $this->setEndpoint('users/' . $userId . '/mentions');
+        $this->setEndpoint('users/' . $user_id . '/mentions');
         return $this;
     }
 
     /**
-     * @param int $userId
+     * User Tweet timeline
+     * Returns most recent Tweets composed a specified user ID
+     * @param int $user_id
      * @return Timeline
      */
-    public function findRecentTweetsByUserId(int $userId): Timeline
+    public function getRecentTweets(int $user_id): Timeline
     {
-        $this->setEndpoint('users/' . $userId . '/tweets');
+        $this->setEndpoint('users/' . $user_id . '/tweets');
+        return $this;
+    }
+
+    /**
+     * Reverse chronological timeline
+     * Returns a collection of recent Tweets by you and users you follow.
+     * @param int $user_id
+     * @return Timeline
+     */
+    public function getReverseChronological(int $user_id): Timeline
+    {
+        $this->setAuthMode(1);
+        $this->setEndpoint('users/' . $user_id . '/timelines/reverse_chronological');
         return $this;
     }
 
