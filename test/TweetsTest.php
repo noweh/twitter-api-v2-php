@@ -8,14 +8,14 @@ use function PHPUnit\Framework\assertTrue;
 
 class TweetsTest extends AbstractTest
 {
-    /** @var array $keywordFilter parameter for TweetLookup. */
+    /** @var array<string> $keywordFilter parameter for TweetLookup. */
     private static array $keywordFilter = ['php'];
 
-    /** @var array $localeFilter parameter for TweetLookup. */
+    /** @var array<string> $localeFilter parameter for TweetLookup. */
     private static array $localeFilter = ['en', 'fr', 'de'];
 
-    /** @var int $userMentioned mentioned user ID. */
-    private static int $userMentioned = 1538300985570885636;
+    /** @var int $userLiked */
+    private static int $userLiked = 93711247;
 
     /**
      * Timeline: Find recent mentions by user ID.
@@ -24,7 +24,7 @@ class TweetsTest extends AbstractTest
     public function testTimelineRecentMentions(): void
     {
         $response = $this->client->timeline()
-            ->getRecentMentions(self::$userMentioned)
+            ->getRecentMentions(self::$settings['account_id'])
             ->performRequest();
 
         assertTrue(is_object($response) && property_exists($response, 'data'));
@@ -38,7 +38,7 @@ class TweetsTest extends AbstractTest
     public function testTimelineRecentTweets(): void
     {
         $response = $this->client->timeline()
-            ->getRecentTweets(self::$userMentioned)
+            ->getRecentTweets(self::$settings['account_id'])
             ->performRequest();
 
         assertTrue(is_object($response) && property_exists($response, 'data'));
@@ -57,6 +57,41 @@ class TweetsTest extends AbstractTest
 
         assertTrue(is_object($response) && property_exists($response, 'data'));
         self::logTweets($response->data);
+    }
+
+    /**
+     * Likes: Tweets liked by a user.
+     * @throws GuzzleException | Exception
+     */
+    public function testLikedTweets(): void
+    {
+        $response = $this->client->tweetLikes()
+            ->getLikedTweets(self::$settings['account_id'])
+            ->addMaxResults(self::$pageSize)
+            ->performRequest();
+
+        assertTrue(is_object($response) && property_exists($response, 'data'));
+        self::logTweets($response->data);
+    }
+
+    /**
+     * Likes: Tweets liked by a user.
+     * @throws GuzzleException | Exception
+     */
+    public function testUsersWhoLiked(): void
+    {
+        $tweet_id = 1093540451678851072;
+        $response = $this->client->tweetLikes()
+            ->getUsersWhoLiked($tweet_id)
+            ->addMaxResults(self::$pageSize)
+            ->performRequest();
+        assertTrue(is_object($response));
+        if (property_exists($response, 'meta') && $response->meta->result_count > 0) {
+            assertTrue( property_exists($response, 'data'));
+            self::logUsers($response->data);
+        } else {
+            echo "Nobody ever liked this tweet.";
+        }
     }
 
     /**
@@ -128,5 +163,19 @@ class TweetsTest extends AbstractTest
             ->performRequest(['tweet_id' => $tweet_id]);
 
         assertTrue(is_object($response2) && property_exists($response2, 'data'));
+    }
+
+    /**
+     * Bookmarks: Lookup a user's Bookmarks (will fail).
+     * @throws GuzzleException | Exception
+     */
+    public function testBookmarksLookup(): void
+    {
+        $response = $this->client->tweetBookmarks()
+            ->lookup()
+            ->performRequest();
+
+        assertTrue(is_object($response) && property_exists($response, 'data'));
+        self::logTweets($response->data);
     }
 }

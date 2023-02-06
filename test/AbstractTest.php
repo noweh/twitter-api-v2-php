@@ -12,8 +12,7 @@ abstract class AbstractTest extends TestCase
     /** @var Client $client */
     protected Client $client;
 
-    /** @var array $settings */
-    private static array $settings = [];
+    protected static array $settings = [];
 
     /** @var int $pageSize */
     protected static int $pageSize = 10;
@@ -25,7 +24,7 @@ abstract class AbstractTest extends TestCase
     public function setUp(): void
     {
         // Error : Class "Dotenv\Dotenv" not found.
-        if (class_exists('Dotenv')) {
+        if (class_exists('Dotenv') && file_exists(__DIR__.'/config/.env')) {
             $dotenv = Dotenv::createUnsafeImmutable(__DIR__.'/config', '.env');
             $dotenv->safeLoad();
         }
@@ -42,7 +41,7 @@ abstract class AbstractTest extends TestCase
     }
 
     /** Log tweet nodes to console */
-    protected static function logTweets(array|\stdClass $data): void
+    protected static function logTweets($data): void
     {
         if (is_object($data)) {
             // Tweet

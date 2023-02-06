@@ -50,6 +50,26 @@ class Client
     }
 
     /**
+     * Access to Tweet/Bookmarks endpoints.
+     * @return TweetBookmarks
+     * @throws \Exception
+     */
+    public function tweetBookmarks(): TweetBookmarks
+    {
+        return new TweetBookmarks($this->settings);
+    }
+
+    /**
+     * Access to Tweet/Likes endpoints.
+     * @return TweetLikes
+     * @throws \Exception
+     */
+    public function tweetLikes(): TweetLikes
+    {
+        return new TweetLikes($this->settings);
+    }
+
+    /**
      * Access to Tweet/Lookup endpoints.
      * @return TweetLookup
      * @throws \Exception

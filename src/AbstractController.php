@@ -2,7 +2,6 @@
 namespace Noweh\TwitterApi;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
 use GuzzleHttp\HandlerStack;
@@ -23,8 +22,12 @@ abstract class AbstractController
      * @var int $auth_mode API Auth Mode
      *                     0 use Bearer token.
      *                     1 use OAuth1 token.
+     *                     2 use Authorization Code Flow
      */
     protected int $auth_mode = 0;
+
+    /** @var string $endpoint */
+    private string $endpoint = '';
 
     /** @var int $account_id OAuth1 User ID */
     protected int $account_id;
@@ -44,58 +47,31 @@ abstract class AbstractController
     /** @var string */
     private string $bearer_token;
 
-    /** @var string $endpoint */
-    private string $endpoint = '';
-
     /** @var string|null $next_page_token Next Page Token for API pagination. */
-    protected string|null $next_page_token = null;
+    protected ?string $next_page_token = null;
 
     /** @var string $mode mode of operation */
     private string $http_request_method = 'GET';
-
-    /** @var string $mode mode of operation */
-    protected ?string $mode = null;
 
     /**
      * Creates object. Requires an array of settings.
      * @param array<string> $settings
      * @throws \Exception when CURL extension is not loaded
      */
-    public function __construct(array $settings = [])
+    public function __construct(array $settings)
     {
-        if (!extension_loaded('curl')) {
-            throw new \Exception('PHP extension CURL is not loaded.');
-        }
-
-        if (!isset(
-            // Consumer Keys
-            $settings['consumer_key'],
-            $settings['consumer_secret'],
-
-            // Authentication Tokens
-            $settings['bearer_token'],
-            $settings['account_id'],
-            $settings['access_token'],
-            $settings['access_token_secret']
-        )) {
-            throw new \Exception('Incomplete settings passed.');
-        }
-
-        $this->consumer_key = $settings['consumer_key'];
-        $this->consumer_secret = $settings['consumer_secret'];
-        $this->bearer_token = $settings['bearer_token'];
-        $this->account_id = $settings['account_id']; // TWITTER_ACCOUNT_ID; also contained in TWITTER_ACCESS_TOKEN.
-        $this->access_token = $settings['access_token'];
-        $this->access_token_secret = $settings['access_token_secret'];
+        $this->extensionLoaded('curl');
+        $this->extensionLoaded('json');
+        $this->parseSettings($settings);
     }
 
     /**
      * Perform the request to Twitter API
      * @param array<string, mixed> $postData
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException |\JsonException | \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException | \JsonException | \Exception
      */
-    public function performRequest(array $postData = []): mixed
+    public function performRequest(array $postData = [])
     {
         try {
             $headers = [
@@ -103,19 +79,13 @@ abstract class AbstractController
                 'Accept' => 'application/json'
             ];
 
-            if ($this->auth_mode == 0) {
+            if ($this->auth_mode == 0) { // Bearer Token
 
                 // Inject the Bearer token header
                 $client = new Client(['base_uri' => self::API_BASE_URI]);
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
 
-                // if GET method with id set, fetch tweet with id ??
-                if (is_array($postData) && isset($postData['id']) && is_numeric($postData['id'])) {
-                    $this->endpoint .= '/'.$postData['id'];
-                    // unset to avoid clash later.
-                    unset($postData['id']);
-                }
-            } else {
+            } else if ($this->auth_mode == 1) { // OAuth 1.0a User Context
 
                 // Insert Oauth1 middleware
                 $stack = HandlerStack::create();
@@ -131,6 +101,8 @@ abstract class AbstractController
                     'handler' => $stack,
                     'auth' => 'oauth'
                 ]);
+            } else if ($this->auth_mode == 2) { // OAuth 2.0 Authorization Code Flow with PKCE
+                throw new \Exception('OAuth 2.0 Authorization Code Flow had not been implemented & also requires user interaction.');
             }
 
             $response  = $client->request($this->getHttpRequestMethod(), $this->constructEndpoint(), [
@@ -138,7 +110,7 @@ abstract class AbstractController
                 'headers' => $headers,
                 // This is always array from function spec, use count to see if data set.
                 // Otherwise, twitter error on empty data.
-                'json' => count($postData) ? $postData: null,
+                'json' => count($postData) ? $postData : null,
             ]);
 
             $body = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
@@ -155,26 +127,67 @@ abstract class AbstractController
             }
             return $body;
 
-        } catch (ClientException $e) {
-            throw new \Exception($e->getMessage());
         } catch (ServerException $e) {
             $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()));
             throw new \Exception($payload->detail, $payload->status);
         }
     }
+
     private function is_windows(): bool {
         return DIRECTORY_SEPARATOR === '\\';
     }
+
     /**
      * Set Auth-Mode
-     *
      * @param int $value 0 use Bearer token.
      *                   1 use OAuth1 token.
+     *                   2 not implemented.
      * @return void
      */
     public function setAuthMode(int $value): void
     {
         $this->auth_mode = $value;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function extensionLoaded(string $ext): void
+    {
+        if (! extension_loaded($ext)) {
+            throw new \Exception('PHP extension '.strtoupper($ext).' is not loaded.');
+        }
+    }
+
+    /**
+     * @param array<string> $settings
+     * @return void
+     * @throws \Exception
+     */
+    private function parseSettings(array $settings): void
+    {
+        if (!isset(
+            // Account ID
+            $settings['account_id'],
+
+            // Consumer Keys
+            $settings['consumer_key'],
+            $settings['consumer_secret'],
+
+            // Authentication Tokens
+            $settings['bearer_token'],
+            $settings['access_token'],
+            $settings['access_token_secret']
+        )) {
+            throw new \Exception('Incomplete settings passed.');
+        }
+
+        $this->account_id = (int) $settings['account_id'];
+        $this->consumer_key = $settings['consumer_key'];
+        $this->consumer_secret = $settings['consumer_secret'];
+        $this->bearer_token = $settings['bearer_token'];
+        $this->access_token = $settings['access_token'];
+        $this->access_token_secret = $settings['access_token_secret'];
     }
 
     /**
@@ -200,6 +213,7 @@ abstract class AbstractController
      * Set Pagination Token
      * @param string $value
      * @return AbstractController
+     * @noinspection PhpUnused
      */
     public function setPaginationToken(string $value): AbstractController
     {

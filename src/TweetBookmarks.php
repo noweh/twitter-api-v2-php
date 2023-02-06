@@ -3,11 +3,12 @@
 namespace Noweh\TwitterApi;
 
 /**
- * Class User/Mutes Controller
- * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/mutes/introduction">Mutes</a>
+ * Class Tweet/Bookmarks Controller
+ * Note: This endpoint only permits the OAuth 2.0 Authorization Code Flow with PKCE.
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/bookmarks/api-reference">Bookmarks</a>
  * @author Martin Zeitler
  */
-class UserMutes extends AbstractController {
+class TweetBookmarks extends AbstractController {
 
     /**
      * @param array<int, string> $settings
@@ -16,40 +17,39 @@ class UserMutes extends AbstractController {
     public function __construct(array $settings)
     {
         parent::__construct($settings);
-        $this->setAuthMode(1);
+        $this->setAuthMode(2);
     }
 
     /**
-     * Look up muted users.
-     * @return UserMutes
+     * Lookup a user's Bookmarks.
+     * @return TweetBookmarks
      */
-    public function lookup(): UserMutes
+    public function lookup(): TweetBookmarks
     {
-        $this->setEndpoint('users/'.$this->account_id.'/muting');
-        $this->setHttpRequestMethod('GET');
+        $this->setEndpoint('users/'.$this->account_id.'/bookmarks');
         return $this;
     }
 
     /**
-     * Mute user by username or ID.
-     * @return UserMutes
+     * Bookmark a Tweet.
+     * @return TweetBookmarks
      */
-    public function mute(): UserMutes
+    public function bookmarkTweet(): TweetBookmarks
     {
-        $this->setEndpoint('users/'.$this->account_id.'/muting');
         $this->setHttpRequestMethod('POST');
+        $this->setEndpoint('users/'.$this->account_id.'/bookmarks');
         return $this;
     }
 
     /**
-     * Mute user by username or ID.
-     * @param int $user_id
-     * @return UserMutes
+     * Remove a Bookmark of a Tweet.
+     * @param int $target_tweet_id
+     * @return TweetBookmarks
      */
-    public function unmute(int $user_id): UserMutes
+    public function removeBookmark(int $target_tweet_id): TweetBookmarks
     {
-        $this->setEndpoint('users/'.$this->account_id.'/muting/'.$user_id);
         $this->setHttpRequestMethod('DELETE');
+        $this->setEndpoint('users/'.$this->account_id.'/bookmarks/' . $target_tweet_id);
         return $this;
     }
 
