@@ -80,6 +80,16 @@ class Client
     }
 
     /**
+     * Access to Tweet/Quotes endpoints.
+     * @return TweetQuotes
+     * @throws \Exception
+     */
+    public function tweetQuotes(): TweetQuotes
+    {
+        return new TweetQuotes($this->settings);
+    }
+
+    /**
      * Access to Tweet/Replies endpoints.
      * @return TweetReplies
      * @throws \Exception

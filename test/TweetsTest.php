@@ -14,8 +14,11 @@ class TweetsTest extends BaseTestCase
     /** @var array<string> $localeFilter parameter for TweetLookup. */
     private static array $localeFilter = ['en', 'fr', 'de'];
 
-    /** @var int $userLiked */
+    /** @var int $replyTweetId */
     private static int $replyTweetId = 1622641314255761409;
+
+    /** @var int $quotedTweetId */
+    private static int $quotedTweetId = 1622641314255761409;
 
     /**
      * Timeline: Find recent mentions by user ID.
@@ -123,6 +126,25 @@ class TweetsTest extends BaseTestCase
 
         assertTrue(is_object($response) && property_exists($response, 'data'));
         self::logTweets($response->data);
+    }
+
+    /**
+     * Returns Quote Tweets for a Tweet specified by the requested Tweet ID.
+     * @throws GuzzleException | Exception
+     */
+    public function testTweetQuotes(): void
+    {
+        $response = $this->client->tweetQuotes()
+            ->getQuoteTweets(self::$quotedTweetId)
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        if (property_exists($response, 'meta') && $response->meta->result_count > 0) {
+            assertTrue( property_exists($response, 'data'));
+            self::logTweets($response->data);
+        } else {
+            echo "Nobody quoted this tweet.";
+        }
     }
 
     /**
