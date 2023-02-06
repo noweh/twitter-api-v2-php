@@ -2,7 +2,6 @@
 
 namespace Noweh\TwitterApi\Test;
 
-use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\TestCase;
 use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
@@ -10,10 +9,13 @@ use function PHPUnit\Framework\assertTrue;
 
 class TwitterTest extends TestCase
 {
-    /** @var Client $twitterClient */
-    private Client $twitterClient;
+    /** @var Client $client */
+    private Client $client;
 
+    /** @var array $settings */
     private static array $settings = [];
+
+    private static int $pageSize = 25;
 
     /**
      * @throws \Exception
@@ -32,171 +34,168 @@ class TwitterTest extends TestCase
             }
         }
 
-        $this->twitterClient = new Client(self::$settings);
+        $this->client = new Client(self::$settings);
     }
 
     /**
-     * Case 1: Search a Tweet
-     * @throws \JsonException | GuzzleException
+     * Lookup Tweets by Keyword.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testSearchTweets(): void
     {
-        $this->assertIsObject($this->searchWithParameters(['php']));
+        $response = $this->client->tweetSearch()
+            ->addFilterOnKeywordOrPhrase(['php'])
+            ->addFilterOnLocales(['fr', 'en'])
+            ->addMaxResults(self::$pageSize)
+            ->showUserDetails()
+            ->showMetrics()
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        assertTrue(property_exists($response, 'meta'));
     }
 
     /**
-     * Case 2: Search an User
-     * @throws \JsonException | GuzzleException
+     * Lookup an User
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testSearchUsers(): void
     {
-        $this->assertIsObject(
-            $this->twitterClient->userSearch()
+        $response = $this->client->userSearch()
             ->findByIdOrUsername('twitterdev', Client::MODES['USERNAME'])
-            ->performRequest()
-        );
+            ->performRequest();
+
+        assertTrue(is_object($response));
     }
 
     /**
-     * Case 3: Find mentions
-     * @throws \JsonException
-     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
+     * Find mentions by user ID.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testFindMentions(): void
     {
-        $this->assertIsObject(
-            $this->twitterClient->timeline()
-                ->findRecentMentioningForUserId('1538300985570885636')
-                ->performRequest()
-        );
+        $response = $this->client->timeline()
+            ->findRecentMentioningForUserId('1538300985570885636')
+            ->performRequest();
+
+        assertTrue(is_object($response));
     }
 
     /**
-     * Case 4: Tweet
-     * @throws \JsonException|\GuzzleHttp\Exception\GuzzleException
-     * @throws \Exception
+     * Share Tweet
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testTweet(): void
     {
         $date = new \DateTime('NOW');
-
-        $return = $this->twitterClient->tweet()->performRequest(
-            'POST',
-            [
-                'text' =>
-                    'BIP BIP BIP... ' .
-                    $date->format(\DateTimeInterface::ATOM) .
-                    ' Wake up!  A new commit is on github (noweh/twitter-api-v2-php)....'
+        $response = $this->client->tweet()
+            ->performRequest('POST', [
+                'text' => 'BIP BIP BIP... ' . $date->format(\DateTimeInterface::ATOM) .
+                    ' Wake up! A new commit is on github (noweh/twitter-api-v2-php)...'
 
             ]
         );
 
-        $this->assertIsObject($return);
+        assertTrue(is_object($response));
     }
 
     /**
-     * Case 5: Retweet a Tweet
-     * @throws \JsonException|\Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * Retweet a random Tweet.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testRetweet(): void
     {
-        $searchResult = $this->searchWithParameters(['php']);
-        if (is_object($searchResult)) {
-            assertTrue(property_exists($searchResult, 'data'));
-            if (property_exists($searchResult, 'data')) {
-                $return = $this->twitterClient->retweet()->performRequest('POST', [
-                    'tweet_id' => $searchResult->data[0]->id
-                ]);
-                $this->assertIsObject($return);
-            }
-        } else {
-            throw new \Exception('error when test', 403);
-        }
+        $response = $this->client
+            ->tweetSearch()
+            ->addFilterOnKeywordOrPhrase(['php'])
+            ->addFilterOnLocales(['fr', 'en'])
+            ->addMaxResults(self::$pageSize)
+            ->showUserDetails()
+            ->showMetrics()
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        assertTrue(property_exists($response, 'meta'));
+
+        // Retweet by random index
+        $tweet_id = $response->data[rand(0, self::$pageSize-1)]->id;
+        $response2 = $this->client
+            ->retweet()
+            ->performRequest(
+                'POST', ['tweet_id' => $tweet_id]
+            );
+
+        assertTrue(is_object($response2));
     }
 
     /**
-     * Case 6: Fetch Tweet by Id
-     * @throws \JsonException|\Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * Retrieve Tweets by user ID.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testFetchTweet(): void
     {
-        $this->assertIsObject($this->twitterClient->tweet()->performRequest(
-            'POST', [
-                'ids' => self::$settings['account_id']
-            ]
-        ));
+        $response = $this->client->tweet()
+            ->performRequest('POST', ['ids' => self::$settings['account_id']]);
+
+        assertTrue(is_object($response));
     }
 
     /**
-     * List blocked users
-     * @throws GuzzleException | \JsonException | \Exception
+     * Retrieve the users which you've blocked.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
-    public function testUserBlocksLookup(): void
+    public function testUserBlocks(): void
     {
-        $this->assertIsObject(
-            $this->twitterClient->userBlocks()
-                ->lookup()
-                ->performRequest()
-        );
+        $response = $this->client->userBlocks()
+            ->lookup()
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        assertTrue(property_exists($response, 'meta'));
+        self::logUsers($response->data);
     }
 
     /**
-     * List followers
-     * @throws GuzzleException | \JsonException | \Exception
+     * Retrieve the users which are following you.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testUserFollowers(): void
     {
-        $this->assertIsObject(
-            $this->twitterClient->userFollows()
-                ->getFollowers()
-                ->performRequest()
-        );
+        $response = $this->client->userFollows()
+            ->getFollowers()
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        assertTrue(property_exists($response, 'meta'));
+        self::logUsers($response->data);
     }
 
     /**
-     * List following
-     * @throws GuzzleException | \JsonException | \Exception
+     * Retrieve the users which you are following.
+     * @throws \GuzzleHttp\Exception\GuzzleException | \Exception
      */
     public function testUserFollowing(): void
     {
-        $this->assertIsObject(
-            $this->twitterClient->userFollows()
-                ->getFollowing()
-                ->performRequest()
-        );
+        $response = $this->client->userFollows()
+            ->getFollowing()
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        assertTrue(property_exists($response, 'meta'));
+        self::logUsers($response->data);
     }
 
-    /**
-     * Return a list of tweets with users details
-     * @param array<string> $keywords
-     * @param array<string> $usernames
-     * @param bool $onlyWithMedia
-     * @return mixed
-     * @throws \JsonException|\Exception|\GuzzleHttp\Exception\GuzzleException
-     */
-    private function searchWithParameters(array $keywords = [], array $usernames = [], $onlyWithMedia = false): mixed
+    /** Log user nodes to console */
+    private static function logUsers(array $data): void
     {
-        $request = $this->twitterClient->tweetSearch()
-            ->showMetrics()
-            ->addFilterOnLocales(['fr', 'en'])
-            ->addMaxResults(11)
-            ->showUserDetails()
-        ;
-
-        if ($onlyWithMedia) {
-            $request->onlyWithMedias();
+        foreach ($data as $item) {
+            $user_id = str_pad($item->id, 20, " ",STR_PAD_LEFT);
+            echo $user_id." $item->username \"".str_replace("\n", " ", $item->name)."\"\n";
         }
-
-        if ($keywords) {
-            $request->addFilterOnKeywordOrPhrase($keywords);
-        }
-
-        if ($usernames) {
-            $request->addFilterOnUsernamesFrom($usernames);
-        }
-
-        return $request->performRequest();
     }
 }
