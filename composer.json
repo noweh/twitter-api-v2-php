@@ -1,12 +1,13 @@
 {
   "name": "noweh/twitter-api-v2-php",
   "description": "This library provide methods for sending messages to Twitter and receiving statuses.",
+  "minimum-stability": "dev",
+  "type": "library",
   "keywords": [
     "twitter",
     "PHP",
     "API"
   ],
-  "type": "library",
   "require": {
     "ext-curl": "*",
     "ext-json": "*",
@@ -15,7 +16,7 @@
     "guzzlehttp/oauth-subscriber": "^0.6.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.6.2",
+    "phpunit/phpunit": "^9.6.3",
     "vlucas/phpdotenv": "^v5.5.0",
     "phpstan/phpstan": "^1.9.14"
   },
@@ -34,6 +35,11 @@
       "Noweh\\TwitterApi\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Noweh\\TwitterApi\\Test\\": "test"
+    }
+  },
   "scripts": {
     "coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main",
     "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main"
@@ -41,6 +47,5 @@
   "scripts-descriptions": {
     "coverage": "Run PHPunit tests with code coverage (Linux)",
     "test": "Run PHPunit tests"
-  },
-  "minimum-stability": "dev"
+  }
 }

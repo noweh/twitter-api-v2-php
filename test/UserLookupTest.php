@@ -15,13 +15,13 @@ class UserLookupTest extends AbstractTest
     private static int $idToLookup = 2244994945;
 
     /** @var array<int> $idToLookup */
-    private static array $idsToLookup = [2244994945];
+    private static array $idsToLookup = [93711247, 2244994945];
 
     /** @var string $nameToLookup */
     private static string $nameToLookup = 'twitterdev';
 
     /** @var array<string> $namesToLookup */
-    private static array $namesToLookup = ['twitterdev'];
+    private static array $namesToLookup = ['androiddev', 'twitterdev'];
 
     /**
      * Lookup a User by username
