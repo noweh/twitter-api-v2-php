@@ -14,4 +14,8 @@
         </testsuite>
     </testsuites>
 
+    <logging>
+        <testdoxHtml outputFile="results/testdox.html"/>
+    </logging>
+
 </phpunit>

@@ -8,5 +8,5 @@
 *.retry
 .vscode/
 .phpunit.result.cache
-/coverage/
+/results/
 /.run/
