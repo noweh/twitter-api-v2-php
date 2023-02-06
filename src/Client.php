@@ -61,23 +61,23 @@ class Client
     }
 
     /**
-     * Access to TweetSearch endpoints
-     * @return TweetSearch
+     * Access to Tweet/Lookup endpoints
+     * @return TweetLookup
      * @throws \Exception
      */
-    public function tweetSearch(): TweetSearch
+    public function tweetLookup(): TweetLookup
     {
-        return new TweetSearch($this->settings);
+        return new TweetLookup($this->settings);
     }
 
     /**
-     * Access To UserSearch endpoints
-     * @return UserSearch
+     * Access To User/Lookup endpoints
+     * @return UserLookup
      * @throws \Exception
      */
-    public function userSearch(): UserSearch
+    public function userLookup(): UserLookup
     {
-        return new UserSearch($this->settings);
+        return new UserLookup($this->settings);
     }
 
     /**

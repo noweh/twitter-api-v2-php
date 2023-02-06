@@ -3,11 +3,11 @@
 namespace Noweh\TwitterApi;
 
 /**
- * Class User/Search Controller
- * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/lookup/introduction">Users lookup</a>
+ * Class User/Lookup Controller
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference">Users Lookup</a>
  * @author Julien Schmitt
  */
-class UserSearch extends AbstractController
+class UserLookup extends AbstractController
 {
     public const MODES = [
         'ID' => 'id',
@@ -17,9 +17,6 @@ class UserSearch extends AbstractController
     /** @var mixed $idOrUsername */
     private mixed $idOrUsername;
 
-    /** @var string $mode */
-    protected string $mode = self::MODES['USERNAME'];
-
     /**
      * @param array<int, string> $settings
      * @throws \Exception
@@ -28,15 +25,16 @@ class UserSearch extends AbstractController
     {
         parent::__construct($settings);
         $this->setEndpoint('users');
+        $this->mode = self::MODES['ID'];
     }
 
     /**
      * returns details about up to 100 users by ID or Username
      * @param mixed $idOrUsername can be an array of items
      * @param string $mode
-     * @return UserSearch
+     * @return UserLookup
      */
-    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserSearch
+    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserLookup
     {
         $this->idOrUsername = $idOrUsername;
         if (in_array($mode, self::MODES, true)) {

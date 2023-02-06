@@ -17,25 +17,29 @@ class TwitterTest extends TestCase
     /** @var array $settings */
     private static array $settings = [];
 
-    /** @var array $keywordFilter parameter for TweetSearch. */
+    /** @var array $keywordFilter parameter for TweetLookup. */
     private static array $keywordFilter = ['php'];
 
-    /** @var array $localeFilter parameter for TweetSearch. */
+    /** @var array $localeFilter parameter for TweetLookup. */
     private static array $localeFilter = ['en', 'fr', 'de'];
 
-    /** @var int $pageSize parameter for TweetSearch. */
-    private static int $pageSize = 25;
+    /** @var int $pageSize parameter for TweetLookup. */
+    private static int $pageSize = 10;
 
-    /** @var int $userToFollow follow/unfollow Mr. Elon Musk. */
+    /** @var int $userToFollow follow/unfollow user ID */
     private static int $userToFollow = 44196397;
 
-    /** @var int $userToBlock block/unblock Mr. Elon Musk. */
+    /** @var int $userToBlock block/unblock user ID */
     private static int $userToBlock = 44196397;
 
-    /** @var int $userToMute mute/unmute Mr. Elon Musk. */
+    /** @var int $userToMute mute/unmute user ID */
     private static int $userToMute = 44196397;
 
+    /** @var int $userMentioned mentioned user ID. */
+    private static int $userMentioned = 1538300985570885636;
+
     /**
+     * Set up Test Case
      * @throws Exception
      */
     public function setUp(): void
@@ -53,17 +57,31 @@ class TwitterTest extends TestCase
                 self::$settings[$name] = $value;
             }
         }
-
         $this->client = new Client(self::$settings);
+    }
+
+    /**
+     * Find mentions by user ID.
+     * @throws GuzzleException | Exception
+     */
+    public function testFindMentions(): void
+    {
+        $response = $this->client->timeline()
+            ->findRecentMentionsForUserId(self::$userMentioned)
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        self::logTweets($response->data);
     }
 
     /**
      * Lookup Tweets by Keyword.
      * @throws GuzzleException | Exception
      */
-    public function testSearchTweets(): void
+    public function testTweetLookup(): void
     {
-        $response = $this->client->tweetSearch()
+        $response = $this->client->tweetLookup()
             ->addFilterOnKeywordOrPhrase(self::$keywordFilter)
             ->addFilterOnLocales(self::$localeFilter)
             ->addMaxResults(self::$pageSize)
@@ -78,43 +96,13 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Lookup an User
-     * @throws GuzzleException | Exception
-     */
-    public function testSearchUsers(): void
-    {
-        $response = $this->client->userSearch()
-            ->findByIdOrUsername('twitterdev', Client::MODES['USERNAME'])
-            ->performRequest();
-
-        assertTrue(is_object($response));
-        assertTrue(property_exists($response, 'data'));
-        self::logUsers([$response->data]);
-    }
-
-    /**
-     * Find mentions by user ID.
-     * @throws GuzzleException | Exception
-     */
-    public function testFindMentions(): void
-    {
-        $response = $this->client->timeline()
-            ->findRecentMentionsForUserId(1538300985570885636)
-            ->performRequest();
-
-        assertTrue(is_object($response));
-        assertTrue(property_exists($response, 'data'));
-        self::logTweets($response->data);
-    }
-
-    /**
      * Share Tweet
      * @throws GuzzleException | Exception
      */
     public function testTweet(): void
     {
         $date = new \DateTime('NOW');
-        $response = $this->client->tweet()
+        $response = $this->client->tweet()->create()
             ->performRequest([
                 'text' => 'BIP BIP BIP... ' . $date->format(\DateTimeInterface::ATOM) .
                     ' Wake up! A new commit is on github (noweh/twitter-api-v2-php)...'
@@ -131,10 +119,10 @@ class TwitterTest extends TestCase
      */
     public function testRetweet(): void
     {
-        $response = $this->client->tweetSearch()
+        $response = $this->client->tweetLookup()
+            ->addMaxResults(self::$pageSize)
             ->addFilterOnKeywordOrPhrase(self::$keywordFilter)
             ->addFilterOnLocales(self::$localeFilter)
-            ->addMaxResults(self::$pageSize)
             ->showUserDetails()
             ->showMetrics()
             ->performRequest();
@@ -142,6 +130,7 @@ class TwitterTest extends TestCase
         assertTrue(is_object($response));
         assertTrue(property_exists($response, 'data'));
         assertTrue(property_exists($response, 'meta'));
+        self::logTweets($response->data);
 
         // Retweet by random index
         $tweet_id = $response->data[rand(0, self::$pageSize-1)]->id;
@@ -152,15 +141,32 @@ class TwitterTest extends TestCase
     }
 
     /**
-     * Retrieve Tweets by user ID.
+     * Retrieve Tweet by tweet ID.
      * @throws GuzzleException | Exception
      */
     public function testFetchTweet(): void
     {
-        $response = $this->client->timeline()
-            ->performRequest(['ids' => self::$settings['account_id']]);
+        $response = $this->client->tweet()->fetch(1622477565565739010)
+            ->performRequest();
 
         assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        self::logTweets($response->data);
+    }
+
+    /**
+     * Lookup an User
+     * @throws GuzzleException | Exception
+     */
+    public function testUserLookup(): void
+    {
+        $response = $this->client->userLookup()
+            ->findByIdOrUsername('twitterdev', Client::MODES['USERNAME'])
+            ->performRequest();
+
+        assertTrue(is_object($response));
+        assertTrue(property_exists($response, 'data'));
+        self::logUsers([$response->data]);
     }
 
     /**
@@ -248,16 +254,22 @@ class TwitterTest extends TestCase
     }
 
     /** Log tweet nodes to console */
-    private static function logTweets(array $data): void
+    private static function logTweets(array|\stdClass $data): void
     {
-        foreach ($data as $item) {
-            $tweet_id = str_pad($item->id, 20, " ",STR_PAD_LEFT);
-            if (property_exists($item, 'author_id')) {
-                $user_id = str_pad($item->author_id, 20, " ",STR_PAD_LEFT);
-                echo $user_id." $tweet_id \"".str_replace("\n", " ", $item->text)."\"\n";
-            } else {
-                // Mentions
-                echo "$tweet_id \"".str_replace("\n", " ", $item->text)."\"\n";
+        if (is_object($data)) {
+            // Tweet
+            $tweet_id = str_pad($data->id, 20, " ",STR_PAD_LEFT);
+            echo "$data->id \"".str_replace("\n", " ", $data->text)."\"\n";
+        } else {
+            foreach ($data as $item) {
+                $tweet_id = str_pad($item->id, 20, " ",STR_PAD_LEFT);
+                if (property_exists($item, 'author_id')) {
+                    $user_id = str_pad($item->author_id, 20, " ",STR_PAD_LEFT);
+                    echo $user_id." $tweet_id \"".str_replace("\n", " ", $item->text)."\"\n";
+                } else {
+                    // Mentions
+                    echo "$tweet_id \"".str_replace("\n", " ", $item->text)."\"\n";
+                }
             }
         }
     }

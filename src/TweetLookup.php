@@ -2,7 +2,12 @@
 
 namespace Noweh\TwitterApi;
 
-class TweetSearch extends AbstractController
+/**
+ * Class Tweet/Lookup Controller
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/lookup/api-reference">Tweet lookup</a>
+ * @author Julien Schmitt
+ */
+class TweetLookup extends AbstractController
 {
     public const OPERATORS = [
         'OR' => 'OR',
@@ -57,9 +62,9 @@ class TweetSearch extends AbstractController
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
      * @param array<string> $usernames
      * @param string|null $operator
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function addFilterOnUsernamesFrom(array $usernames, string $operator = null): TweetSearch
+    public function addFilterOnUsernamesFrom(array $usernames, string $operator = null): TweetLookup
     {
         $this->filteredUsernamesFrom = $usernames;
         if (in_array($operator, self::OPERATORS, true)) {
@@ -73,9 +78,9 @@ class TweetSearch extends AbstractController
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
      * @param array<string> $usernames
      * @param string|null $operator
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function addFilterOnUsernamesTo(array $usernames, string $operator = null): TweetSearch
+    public function addFilterOnUsernamesTo(array $usernames, string $operator = null): TweetLookup
     {
         $this->filteredUsernamesTo = $usernames;
         if (in_array($operator, self::OPERATORS, true)) {
@@ -88,9 +93,9 @@ class TweetSearch extends AbstractController
      * Matches the exact phrase or a hashtag within the body of a Tweet.
      * @param array<string> $keywords
      * @param string|null $operator
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function addFilterOnKeywordOrPhrase(array $keywords, string $operator = null): TweetSearch
+    public function addFilterOnKeywordOrPhrase(array $keywords, string $operator = null): TweetLookup
     {
         $this->filteredKeywords = $keywords;
         if (in_array($operator, self::OPERATORS, true)) {
@@ -103,9 +108,9 @@ class TweetSearch extends AbstractController
      * Matches any Tweet that is in reply to a particular conversation ID.
      * The value can be either the username (excluding the @ character) or the user’s numeric user ID.
      * @param string $conversationId
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function addFilterOnConversationId(string $conversationId): TweetSearch
+    public function addFilterOnConversationId(string $conversationId): TweetLookup
     {
         $this->filteredConversationId = $conversationId;
         return $this;
@@ -117,9 +122,9 @@ class TweetSearch extends AbstractController
      * It is important to note that each Tweet is currently only classified as being of one language,
      * so AND’ing together multiple languages will yield no results.
      * @param array<string> $locales
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function addFilterOnLocales(array $locales): TweetSearch
+    public function addFilterOnLocales(array $locales): TweetLookup
     {
         $this->filteredLocales = $locales;
         return $this;
@@ -132,7 +137,7 @@ class TweetSearch extends AbstractController
      * @param int $number
      * @return $this
      */
-    public function addMaxResults(int $number): TweetSearch
+    public function addMaxResults(int $number): TweetLookup
     {
         $this->maxResults = $number;
         return $this;
@@ -140,9 +145,9 @@ class TweetSearch extends AbstractController
 
     /**
      * Show Metrics in response
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function showMetrics(): TweetSearch
+    public function showMetrics(): TweetLookup
     {
         $this->addMetrics = true;
         return $this;
@@ -150,9 +155,9 @@ class TweetSearch extends AbstractController
 
     /**
      * Show UserDetails in response
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function showUserDetails(): TweetSearch
+    public function showUserDetails(): TweetLookup
     {
         $this->addUserDetails = true;
         return $this;
@@ -161,9 +166,9 @@ class TweetSearch extends AbstractController
     /**
      * Matches Tweets that contain a media object, such as a photo, GIF, or video, as determined by Twitter.
      * This will not match on media created with Periscope, or Tweets with links to other media hosting sites.
-     * @return TweetSearch
+     * @return TweetLookup
      */
-    public function onlyWithMedias(): TweetSearch
+    public function onlyWithMedias(): TweetLookup
     {
         $this->hasMedias = true;
         return $this;

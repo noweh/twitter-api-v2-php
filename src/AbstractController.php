@@ -54,7 +54,7 @@ abstract class AbstractController
     private string $http_request_method = 'GET';
 
     /** @var string $mode mode of operation */
-    protected string $mode;
+    protected ?string $mode = null;
 
     /**
      * Creates object. Requires an array of settings.
@@ -93,9 +93,7 @@ abstract class AbstractController
      * Perform the request to Twitter API
      * @param array<string, mixed> $postData
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \JsonException
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException |\JsonException | \Exception
      */
     public function performRequest(array $postData = []): mixed
     {
@@ -156,11 +154,10 @@ abstract class AbstractController
             }
             return $body;
 
-        } catch (ClientException | ServerException $e) {
+        } catch (ClientException $e) {
+            throw new \Exception($e->getMessage());
+        } catch (ServerException $e) {
             $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()));
-            if (! property_exists($payload, 'status')) {
-                $payload->status = $payload->errors[0]->code;
-            }
             throw new \Exception($payload->detail, $payload->status);
         }
     }

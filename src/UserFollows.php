@@ -4,7 +4,7 @@ namespace Noweh\TwitterApi;
 
 /**
  * Class User/Follows Controller
- * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/follows/introduction">Follows</a>
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference">Follows</a>
  * @author Martin Zeitler
  */
 class UserFollows extends AbstractController {
