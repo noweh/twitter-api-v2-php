@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
 use function PHPUnit\Framework\assertTrue;
 
-class UserFollowsTest extends BasicTest
+class UserFollowsTest extends AbstractTest
 {
     /** @var int $userToFollow follow/unfollow user ID */
     private static int $userToFollow = 2244994945;

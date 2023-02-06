@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
 use function PHPUnit\Framework\assertTrue;
 
-class TweetTest extends BasicTest
+class TweetTest extends AbstractTest
 {
     /**
      * Lookup Tweets by Keyword.

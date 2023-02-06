@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
 use function PHPUnit\Framework\assertTrue;
 
-class UserLookupTest extends BasicTest
+class UserLookupTest extends AbstractTest
 {
     /** @var int $idToLookup */
     private static int $idToLookup = 2244994945;

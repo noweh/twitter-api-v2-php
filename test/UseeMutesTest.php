@@ -6,7 +6,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use function PHPUnit\Framework\assertTrue;
 
-class UseeMutesTest extends BasicTest
+class UseeMutesTest extends AbstractTest
 {
     /** @var int $userToMute mute/unmute user ID */
     private static int $userToMute = 2244994945;

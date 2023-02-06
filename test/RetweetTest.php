@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
 use function PHPUnit\Framework\assertTrue;
 
-class RetweetTest extends BasicTest
+class RetweetTest extends AbstractTest
 {
     /**
      * Retweet a random Tweet.

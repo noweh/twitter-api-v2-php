@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
 use function PHPUnit\Framework\assertTrue;
 
-class UserBlocksTest extends BasicTest
+class UserBlocksTest extends AbstractTest
 {
     /** @var int $userToBlock block/unblock user ID */
     private static int $userToBlock = 2244994945;

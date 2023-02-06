@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 use Noweh\TwitterApi\Client;
 use function PHPUnit\Framework\assertTrue;
 
-class TimelineTest extends BasicTest
+class TimelineTest extends AbstractTest
 {
     /** @var int $userMentioned mentioned user ID. */
     private static int $userMentioned = 1538300985570885636;
