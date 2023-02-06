@@ -18,7 +18,7 @@ class TweetsTest extends BaseTestCase
     private static int $replyTweetId = 1622641314255761409;
 
     /** @var int $quotedTweetId */
-    private static int $quotedTweetId = 1622641314255761409;
+    private static int $quotedTweetId = 1622586244680261639;
 
     /**
      * Timeline: Find recent mentions by user ID.
@@ -143,7 +143,7 @@ class TweetsTest extends BaseTestCase
             assertTrue( property_exists($response, 'data'));
             self::logTweets($response->data);
         } else {
-            echo "Nobody quoted this tweet.";
+            echo "Nobody ever quoted this tweet (" . self::$quotedTweetId . ").";
         }
     }
 
