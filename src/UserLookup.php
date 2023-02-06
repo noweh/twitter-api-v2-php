@@ -15,7 +15,7 @@ class UserLookup extends AbstractController
     ];
 
     /** @var mixed $idOrUsername */
-    private mixed $idOrUsername;
+    private int|string $idOrUsername;
 
     /**
      * @param array<int, string> $settings
@@ -25,20 +25,21 @@ class UserLookup extends AbstractController
     {
         parent::__construct($settings);
         $this->setEndpoint('users');
-        $this->mode = self::MODES['ID'];
     }
 
     /**
-     * returns details about up to 100 users by ID or Username
+     * Returns details about up to 100 users by ID or Username
      * @param mixed $idOrUsername can be an array of items
      * @param string $mode
      * @return UserLookup
      */
-    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserLookup
+    public function findByIdOrUsername(int|string $idOrUsername): UserLookup
     {
         $this->idOrUsername = $idOrUsername;
-        if (in_array($mode, self::MODES, true)) {
-            $this->mode = $mode;
+        if (is_int($this->idOrUsername)) {
+            $this->mode = self::MODES['ID'];
+        } else {
+            $this->mode = self::MODES['USERNAME'];
         }
         return $this;
     }
