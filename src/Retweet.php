@@ -2,7 +2,11 @@
 
 namespace Noweh\TwitterApi;
 
-// https://developer.twitter.com/en/docs/twitter-api/tweets/retweets/api-reference
+/**
+ * Class Retweet Controller
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/retweets/api-reference">Tweet Retweet</a>
+ * @author Julien Schmitt
+ */
 class Retweet extends AbstractController
 {
     /**
