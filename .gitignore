@@ -2,10 +2,11 @@
 /composer.lock
 /test/config/.env
 # Others #
-######################
 .idea/
 .project/
 .bundle/
 *.retry
 .vscode/
 .phpunit.result.cache
+/results/
+/.run/

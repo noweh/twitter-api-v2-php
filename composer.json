@@ -1,35 +1,50 @@
 {
   "name": "noweh/twitter-api-v2-php",
-  "description": "This library provide methods for sending messages to Twitter and receiving statuses.",
-  "keywords": [
-    "twitter",
-    "PHP",
-    "API"
-  ],
+  "description": "This library provides methods for sending messages to Twitter and receiving statuses.",
+  "keywords": ["twitter", "PHP", "API"],
+  "minimum-stability": "stable",
   "type": "library",
-  "require": {
-    "ext-curl": "*",
-    "ext-json": "*",
-    "php": ">=7.4",
-    "guzzlehttp/guzzle": "^7.4",
-    "guzzlehttp/oauth-subscriber": "^0.6"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.5",
-    "vlucas/phpdotenv": "^5.3",
-    "phpstan/phpstan": "^1.2.0"
-  },
   "license": "MIT",
   "authors": [
     {
       "name": "Julien Schmitt",
       "email": "jschmitt95@protonmail.com"
+    }, {
+      "name": "Martin Zeitler",
+      "homepage": "https://github.com/syslogic"
     }
   ],
+  "require": {
+    "ext-curl": "*",
+    "ext-json": "*",
+    "php": ">=7.4",
+    "guzzlehttp/guzzle": "^7.5.0",
+    "guzzlehttp/oauth-subscriber": "^0.6.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6.3",
+    "phpunit/php-code-coverage": "^9.2.24",
+    "vlucas/phpdotenv": "^v5.5.0",
+    "phpstan/phpstan": "^1.9.14"
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration phpunit.xml --testsuite main",
+    "coverage_linux": "export XDEBUG_MODE=coverage && vendor/bin/phpunit --bootstrap vendor/autoload.php --coverage-html --configuration coverage.xml --testsuite main",
+    "coverage_windows": "setlocal xdebug.mode=coverage && %cd%/vendor/bin/phpunit --bootstrap vendor/autoload.php --configuration coverage.xml --testsuite main"
+  },
+  "scripts-descriptions": {
+    "test": "Run PHPUnit tests",
+    "coverage_linux": "Run PHPUnit tests with code coverage on Linux",
+    "coverage_windows": "Run PHPUnit tests with code coverage on Windows"
+  },
   "autoload": {
     "psr-4": {
       "Noweh\\TwitterApi\\": "src/"
     }
   },
-  "minimum-stability": "dev"
+  "autoload-dev": {
+    "psr-4": {
+      "Noweh\\TwitterApi\\Test\\": "test/"
+    }
+  }
 }

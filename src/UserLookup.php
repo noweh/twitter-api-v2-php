@@ -2,18 +2,23 @@
 
 namespace Noweh\TwitterApi;
 
-class UserSearch extends AbstractController
+/**
+ * Class User/Lookup Controller
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference">Users Lookup</a>
+ * @author Julien Schmitt
+ */
+class UserLookup extends AbstractController
 {
     public const MODES = [
         'ID' => 'id',
         'USERNAME' => 'username'
     ];
 
-    /** @var mixed $idOrUsername */
-    private $idOrUsername;
+    /** @var ?string $mode mode of operation */
+    protected ?string $mode = null;
 
-    /** @var string $mode */
-    private string $mode = self::MODES['USERNAME'];
+    /** @var int|string|array $idOrUsername */
+    private $idOrUsername;
 
     /**
      * @param array<int, string> $settings
@@ -26,26 +31,25 @@ class UserSearch extends AbstractController
     }
 
     /**
-     * returns details about up to 100 users by ID or Username
-     * @param mixed $idOrUsername can be an array of items
-     * @param string $mode
-     * @return UserSearch
+     * Returns details about up to 100 users by ID or Username
+     * @param int|string|array $idOrUsername
+     * @return UserLookup
      */
-    public function findByIdOrUsername($idOrUsername, string $mode = self::MODES['ID']): UserSearch
+    public function findByIdOrUsername($idOrUsername): UserLookup
     {
         $this->idOrUsername = $idOrUsername;
-        if (in_array($mode, self::MODES, true)) {
-            $this->mode = $mode;
+        if (is_int($this->idOrUsername) || is_array($this->idOrUsername) && is_int($this->idOrUsername[0])) {
+            $this->mode = self::MODES['ID'];
+        } else if (is_string($this->idOrUsername) || is_array($this->idOrUsername) && is_string($this->idOrUsername[0])) {
+            $this->mode = self::MODES['USERNAME'];
         }
-
         return $this;
     }
 
     /**
      * Retrieve Endpoint value and rebuilt it with the expected parameters
-     * @return string
-     * @throws \JsonException
-     * @throws \Exception
+     * @return string the URL for the request.
+     * @throws \JsonException | \Exception
      */
     protected function constructEndpoint(): string
     {
@@ -53,7 +57,6 @@ class UserSearch extends AbstractController
             $error = new \stdClass();
             $error->message = 'cURL error';
             $error->details = 'An id or username is required';
-
             throw new \Exception(json_encode($error, JSON_THROW_ON_ERROR), 403);
         }
 
@@ -65,13 +68,21 @@ class UserSearch extends AbstractController
                 $endpoint .= '?ids=';
             }
             $endpoint .= implode(',', $this->idOrUsername);
+            // Pagination
+            if (! is_null($this->next_page_token)) {
+                $endpoint .= '&pagination_token=' . $this->next_page_token;
+            }
         } else {
             if ($this->mode === self::MODES['USERNAME']) {
                 $endpoint .= '/by/username';
             }
             $endpoint .= '/' . $this->idOrUsername;
-        }
 
+            // Pagination
+            if (! is_null($this->next_page_token)) {
+                $endpoint .= '?pagination_token=' . $this->next_page_token;
+            }
+        }
         return $endpoint;
     }
 }

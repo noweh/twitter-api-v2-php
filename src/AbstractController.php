@@ -1,107 +1,97 @@
 <?php
-
 namespace Noweh\TwitterApi;
 
-use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
 use GuzzleHttp\HandlerStack;
 
 abstract class AbstractController
 {
-    /** @const string API_URL */
+    /** @const API_BASE_URI */
     private const API_BASE_URI = 'https://api.twitter.com/2/';
 
     /**
-     * @var string
+     * @const API_METHODS
+     * TODO: The HTTP method could be defined from within child controllers,
+     *       in order not having to pass the method with ->performRequest().
      */
-    private $access_token;
+    protected const API_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
     /**
-     * @var string
+     * @var int $auth_mode API Auth Mode
+     *                     0 use Bearer token.
+     *                     1 use OAuth1 token.
+     *                     2 use Authorization Code Flow
      */
-    private $access_token_secret;
+    protected int $auth_mode = 0;
 
-    /**
-     * @var string
-     */
-    private $consumer_key;
+    /** @var string $endpoint */
+    private string $endpoint = '';
 
-    /**
-     * @var string
-     */
-    private $consumer_secret;
+    /** @var int $account_id OAuth1 User ID */
+    protected int $account_id;
 
-    /**
-     * @var string
-     */
-    private $bearer_token;
+    /** @var string */
+    private string $access_token;
 
-    /**
-     * @var string $endpoint
-     */
-    private $endpoint;
+    /** @var string */
+    private string $access_token_secret;
+
+    /** @var string */
+    private string $consumer_key;
+
+    /** @var string */
+    private string $consumer_secret;
+
+    /** @var string */
+    private string $bearer_token;
+
+    /** @var string|null $next_page_token Next Page Token for API pagination. */
+    protected ?string $next_page_token = null;
+
+    /** @var string $mode mode of operation */
+    private string $http_request_method = 'GET';
+
+    protected array $query_string = [];
+
+    protected array $post_body = [];
 
     /**
      * Creates object. Requires an array of settings.
      * @param array<string> $settings
-     * @throws Exception when CURL extension is not loaded
+     * @throws \Exception when CURL extension is not loaded
      */
-    public function __construct(array $settings = [])
+    public function __construct(array $settings)
     {
-        if (!extension_loaded('curl')) {
-            throw new Exception('PHP extension CURL is not loaded.');
-        }
-
-        if (!isset(
-            $settings['access_token'],
-            $settings['access_token_secret'],
-            $settings['consumer_key'],
-            $settings['consumer_secret'],
-            $settings['bearer_token']
-        )) {
-            throw new Exception('Incomplete settings passed.');
-        }
-
-        $this->access_token = $settings['access_token'];
-        $this->access_token_secret = $settings['access_token_secret'];
-        $this->consumer_key = $settings['consumer_key'];
-        $this->consumer_secret = $settings['consumer_secret'];
-        $this->bearer_token = $settings['bearer_token'];
+        $this->extensionLoaded('curl');
+        $this->extensionLoaded('json');
+        $this->parseSettings($settings);
     }
 
     /**
      * Perform the request to Twitter API
-     * @param string $method
      * @param array<string, mixed> $postData
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \JsonException
-     * @throws Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException | \JsonException | \Exception
      */
-    public function performRequest(string $method = 'GET', array $postData = [])
+    public function performRequest(array $postData = [])
     {
         try {
             $headers = [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ];
-            if ($method === 'GET') {
-                // Inject the Bearer token into the header for the call
-                $client = new Client(['base_uri' => self::API_BASE_URI]);
 
+            if ($this->auth_mode == 0) { // Bearer Token
+
+                // Inject the Bearer token header
+                $client = new Client(['base_uri' => self::API_BASE_URI]);
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
 
-                // if GET method with id set, fetch tweet with id
-                if (is_array($postData) && isset($postData['id']) && is_numeric($postData['id'])) {
-                    $this->endpoint .= '/'.$postData['id'];
-                    // unset to avoid clash later.
-                    unset($postData['id']);
-                }
-            } else {
-                // Inject Oauth handler
+            } else if ($this->auth_mode == 1) { // OAuth 1.0a User Context
+
+                // Insert Oauth1 middleware
                 $stack = HandlerStack::create();
                 $middleware = new Oauth1([
                     'consumer_key' => $this->consumer_key,
@@ -110,39 +100,98 @@ abstract class AbstractController
                     'token_secret' => $this->access_token_secret,
                 ]);
                 $stack->push($middleware);
-
                 $client = new Client([
                     'base_uri' => self::API_BASE_URI,
                     'handler' => $stack,
                     'auth' => 'oauth'
                 ]);
+            } else if ($this->auth_mode == 2) { // OAuth 2.0 Authorization Code Flow
+                throw new \Exception('OAuth 2.0 Authorization Code Flow had not been implemented & also requires user interaction.');
             }
 
-            $response  = $client->request($method, $this->constructEndpoint(), [
+            $response  = $client->request($this->getHttpRequestMethod(), $this->constructEndpoint(), [
+                'verify' => !$this->is_windows(), // else composer script will break.
                 'headers' => $headers,
-                // this is always array from function spec,use count to see if data set.
-                // Otherwise twitter error on empty data.
-                'json' => count($postData) ? $postData: null,
+                // This is always array from function spec, use count to see if data set.
+                // Otherwise, twitter error on empty data.
+                'json' => count($postData) ? $postData : null,
             ]);
 
             $body = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
-
             if ($response->getStatusCode() >= 400) {
                 $error = new \stdClass();
                 $error->message = 'cURL error';
                 if ($body) {
                     $error->details = $response;
                 }
-                throw new Exception(
+                throw new \Exception(
                     json_encode($error, JSON_THROW_ON_ERROR),
                     $response->getStatusCode()
                 );
             }
-
             return $body;
-        } catch (ClientException | ServerException $e) {
-            throw new Exception(json_encode($e->getResponse()->getBody()->getContents(), JSON_THROW_ON_ERROR));
+
+        } catch (ServerException $e) {
+            $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()));
+            throw new \Exception($payload->detail, $payload->status);
         }
+    }
+
+    private function is_windows(): bool {
+        return DIRECTORY_SEPARATOR === '\\';
+    }
+
+    /**
+     * Set Auth-Mode
+     * @param int $value 0 use Bearer token.
+     *                   1 use OAuth1 token.
+     *                   2 not implemented.
+     * @return void
+     */
+    public function setAuthMode(int $value): void
+    {
+        $this->auth_mode = $value;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function extensionLoaded(string $ext): void
+    {
+        if (! extension_loaded($ext)) {
+            throw new \Exception('PHP extension '.strtoupper($ext).' is not loaded.');
+        }
+    }
+
+    /**
+     * @param array<string> $settings
+     * @return void
+     * @throws \Exception
+     */
+    private function parseSettings(array $settings): void
+    {
+        if (!isset(
+            // Account ID
+            $settings['account_id'],
+
+            // Consumer Keys
+            $settings['consumer_key'],
+            $settings['consumer_secret'],
+
+            // Authentication Tokens
+            $settings['bearer_token'],
+            $settings['access_token'],
+            $settings['access_token_secret']
+        )) {
+            throw new \Exception('Incomplete settings passed.');
+        }
+
+        $this->account_id = (int) $settings['account_id'];
+        $this->consumer_key = $settings['consumer_key'];
+        $this->consumer_secret = $settings['consumer_secret'];
+        $this->bearer_token = $settings['bearer_token'];
+        $this->access_token = $settings['access_token'];
+        $this->access_token_secret = $settings['access_token_secret'];
     }
 
     /**
@@ -162,5 +211,38 @@ abstract class AbstractController
     protected function constructEndpoint(): string
     {
         return $this->endpoint;
+    }
+
+    /**
+     * Set Pagination Token
+     * @param string $value
+     * @return AbstractController
+     * @noinspection PhpUnused
+     */
+    public function setPaginationToken(string $value): AbstractController
+    {
+        $this->next_page_token = $value;
+        return $this;
+    }
+
+    /**
+     * Set HTTP Request Method
+     * @param string $value
+     * @return void
+     */
+    protected function setHttpRequestMethod(string $value): void
+    {
+        if (in_array($value, self::API_METHODS)) {
+            $this->http_request_method = $value;
+        }
+    }
+
+    /**
+     * Get HTTP Request Method
+     * @return string
+     */
+    private function getHttpRequestMethod(): string
+    {
+        return $this->http_request_method;
     }
 }
