@@ -2,8 +2,11 @@
 
 namespace Noweh\TwitterApi;
 
-// https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference
-
+/**
+ * Class Timeline Controller
+ * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference">Tweet Timelines</a>
+ * @author Julien Schmitt
+ */
 class Timeline extends AbstractController
 {
     /**

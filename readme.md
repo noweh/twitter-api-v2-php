@@ -53,17 +53,17 @@ Example:
 ### To search specific tweets
 Example:
 
-    $return = $client->tweetSearch()
+    $return = $client->tweetLookup()
         ->showMetrics()
         ->onlyWithMedias()
         ->addFilterOnUsernamesFrom([
             'twitterdev',
             'Noweh95'
-        ], TweetSearch::OPERATORS['OR'])
+        ], TweetLookup::OPERATORS['OR'])
         ->addFilterOnKeywordOrPhrase([
             'Dune',
             'DenisVilleneuve'
-        ], TweetSearch::OPERATORS['AND'])
+        ], TweetLookup::OPERATORS['AND'])
         ->addFilterOnLocales(['fr', 'en'])
         ->showUserDetails()
         ->performRequest()
@@ -76,7 +76,7 @@ You can specify the search mode as a second parameter (`Client::MODES['USERNAME'
 
 Example:
 
-    $return = $client->userSearch()
+    $return = $client->userLookup()
         ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
         ->performRequest()
     ;

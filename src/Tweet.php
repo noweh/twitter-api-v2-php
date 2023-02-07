@@ -2,6 +2,10 @@
 
 namespace Noweh\TwitterApi;
 
+/**
+ * Class Tweet Controller
+ * @author Julien Schmitt
+ */
 class Tweet extends AbstractController
 {
     /**
