@@ -17,7 +17,7 @@ class UserLookup extends AbstractController
     /** @var ?string $mode mode of operation */
     protected ?string $mode = null;
 
-    /** @var int|string|array $idOrUsername */
+    /** @var int|string|array<string|int> $idOrUsername */
     private $idOrUsername;
 
     /**
@@ -32,15 +32,15 @@ class UserLookup extends AbstractController
 
     /**
      * Returns details about up to 100 users by ID or Username
-     * @param int|string|array $idOrUsername
+     * @param int|string|array<string|int> $idOrUsername
      * @return UserLookup
      */
     public function findByIdOrUsername($idOrUsername): UserLookup
     {
         $this->idOrUsername = $idOrUsername;
-        if (is_int($this->idOrUsername) || is_array($this->idOrUsername) && is_int($this->idOrUsername[0])) {
+        if (is_int($this->idOrUsername) || (is_array($this->idOrUsername) && is_numeric($this->idOrUsername[0]))) {
             $this->mode = self::MODES['ID'];
-        } else if (is_string($this->idOrUsername) || is_array($this->idOrUsername) && is_string($this->idOrUsername[0])) {
+        } else if (is_string($this->idOrUsername) || (is_array($this->idOrUsername) && is_string($this->idOrUsername[0]))) {
             $this->mode = self::MODES['USERNAME'];
         }
         return $this;

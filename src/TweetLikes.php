@@ -7,7 +7,10 @@ namespace Noweh\TwitterApi;
  * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/likes/api-reference">Likes</a>
  * @author Martin Zeitler
  */
-class TweetLikes extends AbstractController {
+class TweetLikes extends AbstractController
+{
+    /** @var int $maxResults */
+    private int $maxResults;
 
     /**
      * @param array<int, string> $settings
@@ -34,10 +37,10 @@ class TweetLikes extends AbstractController {
 
     /**
      * Tweets liked by a user.
-     * @param int $user_id
+     * @param string $user_id
      * @return TweetLikes
      */
-    public function getLikedTweets(int $user_id): TweetLikes
+    public function getLikedTweets(string $user_id): TweetLikes
     {
         $this->setEndpoint('users/'.$user_id.'/liked_tweets');
         $this->setHttpRequestMethod('GET');
@@ -46,12 +49,12 @@ class TweetLikes extends AbstractController {
 
     /**
      * Users who have liked a Tweet.
-     * @param int $tweet_id
+     * @param string $tweet_id
      * @return TweetLikes
      */
-    public function getUsersWhoLiked(int $tweet_id): TweetLikes
+    public function getUsersWhoLiked(string $tweet_id): TweetLikes
     {
-        $this->setEndpoint('tweets/'.$tweet_id.'/liking_users');
+        $this->setEndpoint('tweets/' . $tweet_id . '/liking_users');
         $this->setHttpRequestMethod('GET');
         return $this;
     }
@@ -69,9 +72,10 @@ class TweetLikes extends AbstractController {
 
     /**
      * Allows a user ID to unlike a Tweet
+     * @param int $tweet_id
      * @return TweetLikes
      */
-    public function unlike($tweet_id): TweetLikes
+    public function unlike(int $tweet_id): TweetLikes
     {
         $this->setEndpoint('users/'.$this->account_id.'/likes/' . $tweet_id);
         $this->setHttpRequestMethod('DELETE');

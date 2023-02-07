@@ -111,7 +111,7 @@ class Client
 
     /**
      * Access To User/Follows endpoints.
-     * @return UserBlocks
+     * @return UserFollows
      * @throws \Exception
      */
     public function userFollows(): UserFollows

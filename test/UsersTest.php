@@ -8,8 +8,8 @@ use function PHPUnit\Framework\assertTrue;
 
 class UsersTest extends BaseTestCase
 {
-    /** @var int $userToBlock block/unblock user ID */
-    private static int $userToBlock = 2244994945;
+    /** int $userToBlock block/unblock user ID */
+    //private static int $userToBlock = 2244994945;
 
     /** @var int $userToFollow follow/unfollow user ID */
     private static int $userToFollow = 2244994945;
@@ -17,7 +17,7 @@ class UsersTest extends BaseTestCase
     /** @var int $idToLookup */
     private static int $idToLookup = 2244994945;
 
-    /** @var array<int> $idToLookup */
+    /** @var array<int> $idsToLookup */
     private static array $idsToLookup = [93711247, 2244994945];
 
     /** @var string $nameToLookup */
@@ -26,8 +26,8 @@ class UsersTest extends BaseTestCase
     /** @var array<string> $namesToLookup */
     private static array $namesToLookup = ['androiddev', 'twitterdev'];
 
-    /** @var int $userToMute mute/unmute user ID */
-    private static int $userToMute = 2244994945;
+    /** int $userToMute mute/unmute user ID */
+    //private static int $userToMute = 2244994945;
 
     /**
      * Retrieve the users which you've blocked.
@@ -111,7 +111,7 @@ class UsersTest extends BaseTestCase
     }
 
     /**
-     * Lookup an User by username
+     * Lookup a User by username
      * @throws GuzzleException | Exception
      */
     public function testLookupByIds(): void

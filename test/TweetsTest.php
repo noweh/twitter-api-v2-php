@@ -83,7 +83,7 @@ class TweetsTest extends BaseTestCase
      */
     public function testUsersWhoLiked(): void
     {
-        $tweet_id = 1093540451678851072;
+        $tweet_id = "1093540451678851072";
         $response = $this->client->tweetLikes()
             ->addMaxResults(self::$pageSize)
             ->getUsersWhoLiked($tweet_id)

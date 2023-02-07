@@ -9,10 +9,10 @@ class Timeline extends AbstractController
     /**
      * User mention timeline
      * Returns most recent Tweets mentioning a specified user ID
-     * @param int $user_id
+     * @param string $user_id
      * @return Timeline
      */
-    public function getRecentMentions(int $user_id): Timeline
+    public function getRecentMentions(string $user_id): Timeline
     {
         $this->setEndpoint('users/' . $user_id . '/mentions');
         return $this;
@@ -21,10 +21,10 @@ class Timeline extends AbstractController
     /**
      * User Tweet timeline
      * Returns most recent Tweets composed a specified user ID
-     * @param int $user_id
+     * @param string $user_id
      * @return Timeline
      */
-    public function getRecentTweets(int $user_id): Timeline
+    public function getRecentTweets(string $user_id): Timeline
     {
         $this->setEndpoint('users/' . $user_id . '/tweets');
         return $this;

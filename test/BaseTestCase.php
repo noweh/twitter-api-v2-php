@@ -12,6 +12,7 @@ abstract class BaseTestCase extends TestCase
     /** @var Client $client */
     protected Client $client;
 
+    /** @var array<string> $settings */
     protected static array $settings = [];
 
     /** @var int $pageSize */
@@ -40,7 +41,10 @@ abstract class BaseTestCase extends TestCase
         $this->client = new Client(self::$settings);
     }
 
-    /** Log tweet nodes to console */
+    /**
+     * Log tweet nodes to console
+     * @param array<\stdClass> | \stdClass $data
+     */
     protected static function logTweets($data): void
     {
         if (is_object($data)) {
@@ -61,7 +65,10 @@ abstract class BaseTestCase extends TestCase
         }
     }
 
-    /** Log user nodes to console */
+    /**
+     * Log user nodes to console
+     * @param array<\stdClass> $data
+     */
     protected static function logUsers(array $data): void
     {
         foreach ($data as $item) {

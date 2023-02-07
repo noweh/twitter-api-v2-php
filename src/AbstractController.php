@@ -53,8 +53,10 @@ abstract class AbstractController
     /** @var string $mode mode of operation */
     private string $http_request_method = 'GET';
 
+    /** @var array<string|int> $query_string */
     protected array $query_string = [];
 
+    /** @var array<string> $post_body */
     protected array $post_body = [];
 
     /**
@@ -73,7 +75,7 @@ abstract class AbstractController
      * Perform the request to Twitter API
      * @param array<string, mixed> $postData
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException | \JsonException | \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException|\RuntimeException|\JsonException
      */
     public function performRequest(array $postData = [])
     {
@@ -83,14 +85,11 @@ abstract class AbstractController
                 'Accept' => 'application/json'
             ];
 
-            if ($this->auth_mode == 0) { // Bearer Token
-
+            if ($this->auth_mode === 0) { // Bearer Token
                 // Inject the Bearer token header
                 $client = new Client(['base_uri' => self::API_BASE_URI]);
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
-
-            } else if ($this->auth_mode == 1) { // OAuth 1.0a User Context
-
+            } elseif ($this->auth_mode === 1) { // OAuth 1.0a User Context
                 // Insert Oauth1 middleware
                 $stack = HandlerStack::create();
                 $middleware = new Oauth1([
@@ -105,8 +104,8 @@ abstract class AbstractController
                     'handler' => $stack,
                     'auth' => 'oauth'
                 ]);
-            } else if ($this->auth_mode == 2) { // OAuth 2.0 Authorization Code Flow
-                throw new \Exception('OAuth 2.0 Authorization Code Flow had not been implemented & also requires user interaction.');
+            } else { // OAuth 2.0 Authorization Code Flow
+                throw new \RuntimeException('OAuth 2.0 Authorization Code Flow had not been implemented & also requires user interaction.');
             }
 
             $response  = $client->request($this->getHttpRequestMethod(), $this->constructEndpoint(), [
@@ -124,7 +123,7 @@ abstract class AbstractController
                 if ($body) {
                     $error->details = $response;
                 }
-                throw new \Exception(
+                throw new \RuntimeException(
                     json_encode($error, JSON_THROW_ON_ERROR),
                     $response->getStatusCode()
                 );
@@ -132,8 +131,10 @@ abstract class AbstractController
             return $body;
 
         } catch (ServerException $e) {
-            $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()));
-            throw new \Exception($payload->detail, $payload->status);
+            /** @var \stdClass $payload */
+            $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()), false, 512,
+                JSON_THROW_ON_ERROR);
+            throw new \RuntimeException($payload->detail, $payload->status);
         }
     }
 
