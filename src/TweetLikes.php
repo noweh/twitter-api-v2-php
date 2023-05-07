@@ -87,15 +87,16 @@ class TweetLikes extends AbstractController
      * @return string the URL for the request.
      * @throws \Exception
      */
-    protected function constructEndpoint(): string {
-        if (! empty($this->maxResults)) {
+    protected function constructEndpoint(): string
+    {
+        if (!empty($this->maxResults)) {
             $this->query_string['max_results'] = $this->maxResults;
         }
-        if (! is_null($this->next_page_token)) {
+        if (!is_null($this->next_page_token)) {
             $this->query_string['pagination_token'] = $this->next_page_token;
         }
         $endpoint = parent::constructEndpoint();
-        if (sizeof($this->query_string) > 0) {
+        if (count($this->query_string) > 0) {
             $endpoint .= '?' . http_build_query($this->query_string);
         }
         return $endpoint;

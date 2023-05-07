@@ -7,8 +7,8 @@ namespace Noweh\TwitterApi;
  * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/quote-tweets/api-reference/get-tweets-id-quote_tweets">Quote Tweets</a>
  * @author Martin Zeitler
  */
-class TweetQuotes extends AbstractController {
-
+class TweetQuotes extends AbstractController
+{
     /**
      * @param array<int, string> $settings
      * @throws \Exception

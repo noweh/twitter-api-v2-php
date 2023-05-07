@@ -7,8 +7,8 @@ namespace Noweh\TwitterApi;
  * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/follows/api-reference">Follows</a>
  * @author Martin Zeitler
  */
-class UserFollows extends AbstractController {
-
+class UserFollows extends AbstractController
+{
     /**
      * @param array<int, string> $settings
      * @throws \Exception
@@ -68,7 +68,8 @@ class UserFollows extends AbstractController {
      * @return string the URL for the request.
      * @throws \Exception
      */
-    protected function constructEndpoint(): string {
+    protected function constructEndpoint(): string
+    {
         $endpoint = parent::constructEndpoint();
         if (! is_null($this->next_page_token)) {
             $this->query_string['pagination_token'] = $this->next_page_token;

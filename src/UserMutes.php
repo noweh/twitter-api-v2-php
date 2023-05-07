@@ -7,8 +7,8 @@ namespace Noweh\TwitterApi;
  * @see <a href="https://developer.twitter.com/en/docs/twitter-api/users/mutes/introduction">Mutes</a>
  * @author Martin Zeitler
  */
-class UserMutes extends AbstractController {
-
+class UserMutes extends AbstractController
+{
     /**
      * @param array<int, string> $settings
      * @throws \Exception
@@ -58,9 +58,10 @@ class UserMutes extends AbstractController {
      * @return string the URL for the request.
      * @throws \Exception
      */
-    protected function constructEndpoint(): string {
+    protected function constructEndpoint(): string
+    {
         $endpoint = parent::constructEndpoint();
-        if (! is_null($this->next_page_token)) {
+        if (!is_null($this->next_page_token)) {
             $this->query_string['pagination_token'] = $this->next_page_token;
             $endpoint .= '?' . http_build_query($this->query_string);
         }

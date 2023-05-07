@@ -159,7 +159,7 @@ abstract class AbstractController
      */
     private function extensionLoaded(string $ext): void
     {
-        if (! extension_loaded($ext)) {
+        if (!extension_loaded($ext)) {
             throw new \Exception('PHP extension '.strtoupper($ext).' is not loaded.');
         }
     }

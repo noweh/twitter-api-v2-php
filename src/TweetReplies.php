@@ -7,8 +7,8 @@ namespace Noweh\TwitterApi;
  * @see <a href="https://developer.twitter.com/en/docs/twitter-api/tweets/hide-replies/api-reference/put-tweets-id-hidden">Hide replies</a>
  * @author Martin Zeitler
  */
-class TweetReplies extends AbstractController {
-
+class TweetReplies extends AbstractController
+{
     /**
      * @param array<int, string> $settings
      * @throws \Exception

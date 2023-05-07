@@ -40,7 +40,7 @@ class UserLookup extends AbstractController
         $this->idOrUsername = $idOrUsername;
         if (is_int($this->idOrUsername) || (is_array($this->idOrUsername) && is_numeric($this->idOrUsername[0]))) {
             $this->mode = self::MODES['ID'];
-        } else if (is_string($this->idOrUsername) || (is_array($this->idOrUsername) && is_string($this->idOrUsername[0]))) {
+        } else if (is_string($this->idOrUsername) || is_string($this->idOrUsername[0])) {
             $this->mode = self::MODES['USERNAME'];
         }
         return $this;
@@ -69,7 +69,7 @@ class UserLookup extends AbstractController
             }
             $endpoint .= implode(',', $this->idOrUsername);
             // Pagination
-            if (! is_null($this->next_page_token)) {
+            if (!is_null($this->next_page_token)) {
                 $endpoint .= '&pagination_token=' . $this->next_page_token;
             }
         } else {
@@ -79,7 +79,7 @@ class UserLookup extends AbstractController
             $endpoint .= '/' . $this->idOrUsername;
 
             // Pagination
-            if (! is_null($this->next_page_token)) {
+            if (!is_null($this->next_page_token)) {
                 $endpoint .= '?pagination_token=' . $this->next_page_token;
             }
         }
