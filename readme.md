@@ -19,8 +19,6 @@ Twitter API V2 is a PHP package which provides an easy and fast access to Twitte
     - [Prepare settings](#prepare-settings)
 * [Tweets endpoints](#tweet-endpoints)
     - [Timeline endpoints](#timeline-endpoints)
-        - [Retrieve the users which you've blocked](#retrieve-the-users-which-youve-blocked)
-    - [User/Follows endpoints](#userfollows-endpoints)
         - [Find Recent Mentioning for a User](#find-recent-mentioning-for-a-user)
         - [Find Recent Tweets for a User](#find-recent-tweets-for-a-user)
         - [Reverse Chronological Timeline by user ID](#reverse-chronological-timeline-by-user-id)
