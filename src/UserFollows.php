@@ -100,6 +100,12 @@ class UserFollows extends AbstractController
             $endpoint .= '?' . http_build_query($this->query_string);
         }
 
+        if(preg_match('/\?/', $endpoint)) {
+            $endpoint .= '&user.fields=description';
+        } else {
+            $endpoint .= '?user.fields=description';
+        }
+
         return $endpoint;
     }
 }
