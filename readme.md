@@ -46,15 +46,14 @@ Twitter API V2 is a PHP package which provides an easy and fast access to Twitte
     - [User/Follows endpoints](#userfollows-endpoints)
         - [Retrieve the users which are following you](#retrieve-the-users-which-are-following-you)
         - [Retrieve the users which you are following](#retrieve-the-users-which-you-are-following)
+        - [Follow a user](#follow-a-user)
+        - [Unfollow a user](#unfollow-a-user)
     - [User/Lookup endpoints](#userlookup-endpoints)
         - [Find Twitter Users](#find-twitter-users)
     - [User/Mutes endpoints](#usermutes-endpoints)
         - [Retrieve the users which you've muted](#retrieve-the-users-which-youve-muted)
         - [Mute user by username or ID](#mute-user-by-username-or-id)
         - [Unmute user by username or ID](#unmute-user-by-username-or-id)
-    - [User/Follows endpoints](#userfollows-endpoints)
-        - [Follow a user](#follow-a-user)
-        - [Unfollow a user](#unfollow-a-user)
 * [Contributing](#contributing)
     - [To run test](#to-run-tests)
     - [To run code analyzer](#to-run-code-analyzer)
@@ -229,6 +228,16 @@ Example:
 
     $return = $client->userFollows()->getFollowing()->performRequest();
 
+### Follow a user
+Example:
+
+    $return = $client->userFollows()->follow()->performRequest(['target_user_id' => $userId]);
+
+### Unfollow a user
+Example:
+
+    $return = $client->userFollows()->unfollow($userId)->performRequest(['target_user_id' => self::$userId]);
+
 ## User/Lookup endpoints
 
 ### Find Twitter Users
@@ -259,18 +268,6 @@ Example:
 Example:
 
     $return = $client->userMutes()->unmute()->performRequest(['target_user_id' => $userId]);
-
-## User/Follows endpoints
-
-### Follow a user
-Example:
-
-    $return = $client->userFollows()->follow()->performRequest(['target_user_id' => $userId]);
-
-### Unfollow a user
-Example:
-
-    $return = $client->userFollows()->unfollow($userId)->performRequest(['target_user_id' => self::$userId]);
 
 ---
 
