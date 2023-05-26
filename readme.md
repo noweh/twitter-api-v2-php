@@ -138,11 +138,11 @@ Example:
         ->addFilterOnUsernamesFrom([
             'twitterdev',
             'Noweh95'
-        ], TweetLookup::OPERATORS['OR'])
+        ], \Noweh\TwitterApi\TweetLookup::OPERATORS['OR'])
         ->addFilterOnKeywordOrPhrase([
             'Dune',
             'DenisVilleneuve'
-        ], TweetLookup::OPERATORS['AND'])
+        ], \Noweh\TwitterApi\TweetLookup::OPERATORS['AND'])
         ->addFilterOnLocales(['fr', 'en'])
         ->showUserDetails()
         ->performRequest()
@@ -239,7 +239,7 @@ You can specify the search mode as a second parameter (`Client::MODES['USERNAME'
 Example:
 
     $return = $client->userLookup()
-        ->findByIdOrUsername('twitterdev', UserSearch::MODES['USERNAME'])
+        ->findByIdOrUsername('twitterdev', \Noweh\TwitterApi\UserLookup::MODES['USERNAME'])
         ->performRequest()
     ;
 
