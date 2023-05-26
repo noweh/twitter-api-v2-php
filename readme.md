@@ -184,7 +184,7 @@ Example:
 ### Retweet a Tweet
 Example:
 
-    $return = $client->retweet()->performRequest(['tweetId' => $tweet_id]);
+    $return = $client->retweet()->performRequest(['tweet_id' => $tweet_id]);
 
 ## Tweet/Replies endpoints
 
