@@ -172,6 +172,22 @@ Example:
 
     $return = $client->tweet()->create()->performRequest(['text' => 'Test Tweet... ']);
 
+### Upload image to Twitter (and use in Tweets)
+Example:
+
+    $file_data = base64_encode(file_get_contents($file));
+    $media_info = $client->uploadMedia()
+                        ->upload($file_data);
+    $return = $client->tweet()->create()
+                ->performRequest([
+                    'text' => 'Test Tweet... ', 
+                    "media" => [
+                        "media_ids" => [
+                            $media_info["media_id"]
+                        ]
+                    ]
+                ]);
+
 ## Tweet/Quotes endpoints
 
 ### Returns Quote Tweets for a Tweet specified by the requested Tweet ID
