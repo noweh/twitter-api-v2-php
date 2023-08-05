@@ -20,6 +20,16 @@ class Client
     }
 
     /**
+     * Upload Media to Twitter
+     * @return Media
+     * @throws \Exception
+     */
+    public function uploadMedia(): Media
+    {
+        return new Media($this->settings);
+    }
+
+    /**
      * Access to Retweet endpoints.
      * @return Retweet
      * @throws \Exception
