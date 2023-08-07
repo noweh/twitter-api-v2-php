@@ -31,6 +31,7 @@ Twitter API V2 is a PHP package which provides an easy and fast access to Twitte
     - [Tweet endpoints](#tweetlikes-endpoints)
         - [Fetch a tweet by Id](#fetch-a-tweet-by-id)
         - [Create a new Tweet](#create-a-new-tweet)
+        - [Upload image to Twitter (and use in Tweets)](#upload-image-to-twitter-and-use-in-tweets)
     - [Tweet/Quotes endpoints](#tweetquotes-endpoints)
         - [Returns Quote Tweets for a Tweet specified by the requested Tweet ID](#returns-quote-tweets-for-a-tweet-specified-by-the-requested-tweet-id)
     - [Retweet endpoints](#retweet-endpoints)
