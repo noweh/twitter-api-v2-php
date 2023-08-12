@@ -77,7 +77,7 @@ abstract class AbstractController
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException|\RuntimeException|\JsonException
      */
-    public function performRequest(array $postData = [])
+    public function performRequest(array $postData = [], $withHeaders = false)
     {
         try {
             $headers = [
@@ -117,6 +117,11 @@ abstract class AbstractController
             ]);
 
             $body = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
+
+            if ($withHeaders) {
+                $body->headers = $response->getHeaders();
+            }
+
             if ($response->getStatusCode() >= 400) {
                 $error = new \stdClass();
                 $error->message = 'cURL error';
