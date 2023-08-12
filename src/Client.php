@@ -140,6 +140,16 @@ class Client
     }
 
     /**
+     * Access To user/me endpoint.
+     * @return UserMeLookup
+     * @throws \Exception
+     */
+    public function userMeLookup(): UserMeLookup
+    {
+        return new UserMeLookup($this->settings);
+    }
+
+    /**
      * Access To User/Mutes endpoints.
      * @return UserMutes
      * @throws \Exception

@@ -341,6 +341,12 @@ $return = $client->userFollows()->unfollow($userId)->performRequest(['target_use
 
 ## User/Lookup endpoints
 
+### Find Me
+Example:
+```php
+$return = $client->userMeLookup()->performRequest();
+```
+
 ### Find Twitter Users
 `findByIdOrUsername()` expects either an array, or a string.
 

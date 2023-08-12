@@ -83,10 +83,12 @@ class UserLookup extends AbstractController
                 $endpoint .= '?pagination_token=' . $this->next_page_token;
             }
         }
-        if(preg_match('/\?/', $endpoint))
+        if (preg_match('/\?/', $endpoint)) {
             $endpoint .= '&user.fields=description';
-        else
+        } else {
             $endpoint .= '?user.fields=description';
+        }
+
         return $endpoint;
     }
 }
