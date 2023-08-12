@@ -52,6 +52,7 @@ Twitter API V2 is a PHP package which provides an easy and fast access to Twitte
         - [Follow a user](#follow-a-user)
         - [Unfollow a user](#unfollow-a-user)
     - [User/Lookup endpoints](#userlookup-endpoints)
+        - [Find me](#find-me) 
         - [Find Twitter Users](#find-twitter-users)
     - [User/Mutes endpoints](#usermutes-endpoints)
         - [Retrieve the users which you've muted](#retrieve-the-users-which-youve-muted)
