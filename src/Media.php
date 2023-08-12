@@ -83,10 +83,8 @@ class Media extends AbstractController
             if ($response->getStatusCode() === 200) {
                 return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
             }
-        }
-        catch (Exception $err)
-        {
-            throw new Exception($err->getTraceAsString());
+        } catch (Exception $e) {
+            throw new \RuntimeException($e->getResponse()->getBody()->getContents(), $e->getCode());
         }
 
         return null;

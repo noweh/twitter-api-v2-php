@@ -177,17 +177,16 @@ Example:
 Example:
 
     $file_data = base64_encode(file_get_contents($file));
-    $media_info = $client->uploadMedia()
-                        ->upload($file_data);
+    $media_info = $client->uploadMedia()->upload($file_data);
     $return = $client->tweet()->create()
-                ->performRequest([
-                    'text' => 'Test Tweet... ', 
-                    "media" => [
-                        "media_ids" => [
-                            $media_info["media_id"]
-                        ]
-                    ]
-                ]);
+        ->performRequest([
+            'text' => 'Test Tweet... ', 
+            "media" => [
+                "media_ids" => [
+                    (string)$media_info["media_id"]
+                ]
+            ]
+        ]);
 
 ## Tweet/Quotes endpoints
 

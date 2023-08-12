@@ -135,6 +135,8 @@ abstract class AbstractController
             $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()), false, 512,
                 JSON_THROW_ON_ERROR);
             throw new \RuntimeException($payload->detail, $payload->status);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            throw new \RuntimeException($e->getResponse()->getBody()->getContents(), $e->getCode());
         }
     }
 
