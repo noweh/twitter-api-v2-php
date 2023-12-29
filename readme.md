@@ -238,7 +238,10 @@ $client->tweetLookup()
 ### Fetch a tweet by Id
 Example:
 ```php
-$return = $client->tweet()->->fetch(1622477565565739010)->performRequest();
+$return = $client->tweet()
+->addFieldsForFetch(['created_at', 'author_id', 'in_reply_to_user_id'])
+->fetch(1622477565565739010)
+->performRequest();
 ```
 
 ### Create a new Tweet
