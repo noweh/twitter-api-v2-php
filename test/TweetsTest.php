@@ -121,7 +121,9 @@ class TweetsTest extends BaseTestCase
      */
     public function testFetchTweet(): void
     {
-        $response = $this->client->tweet()->fetch(1622477565565739010)
+        $response = $this->client->tweet()
+            ->addFieldsForFetch(['created_at', 'author_id', 'in_reply_to_user_id'])
+            ->fetch(1622477565565739010)
             ->performRequest();
 
         assertTrue(is_object($response) && property_exists($response, 'data'));
