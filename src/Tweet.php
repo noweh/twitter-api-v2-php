@@ -45,9 +45,7 @@ class Tweet extends AbstractController
      */
     public function addFieldsForFetch(array $fields): Tweet
     {
-        if ($this->fieldsForFetch === '') {
-            $this->fieldsForFetch = '&tweet.fields=';
-        }
+        $this->fieldsForFetch = '&tweet.fields=';
 
         foreach ($fields as $field) {
             if (!in_array($field, self::AVAILABLE_FIELDS)) {
