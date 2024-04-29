@@ -95,7 +95,8 @@ $settings['access_token'],
 $settings['access_token_secret'],
 $settings['consumer_key'],
 $settings['consumer_secret'],
-$settings['bearer_token']
+$settings['bearer_token'],
+$settings['free_mode'] = false; // Optional
 
 $client = new Client($settings);
 ```
@@ -119,8 +120,7 @@ $response = $this->client->tweet()->create()
     ->performRequest([
         'text' => 'Test Tweet... '
     ],
-    withHeaders: true
-    )
+    withHeaders: true)
 ;
 
 /*
@@ -160,6 +160,19 @@ object(stdClass)#399 (2) {
 }
 */
 ```
+### Free mode
+
+This API can be used in free mode, which allows for a limited usage of the API.
+In this mode, the [Find me](#find-me) method is the only one that can be used.
+You have to set the `free_mode` parameter to `true` when creating the client.
+
+Example:
+```php
+...
+$settings['free_mode'] = true;
+$client = new Client($settings);
+```
+
 ---
 ## Tweets endpoints
 

@@ -27,8 +27,16 @@ class UserMeLookup extends AbstractController
      */
     protected function constructEndpoint(): string
     {
+        if ($this->free_mode) {
+            return parent::constructEndpoint() .
+                '?user.fields=created_at,description,entities,id,location,name,most_recent_tweet_id,' .
+                'profile_image_url,protected,public_metrics,url,username,verified,verified_type' .
+                '&expansions=pinned_tweet_id'
+            ;
+        }
+
         return parent::constructEndpoint() .
-            '?user.fields=created_at,description,entities,id,location,name,' .
+            '?user.fields=created_at,description,entities,id,location,name,most_recent_tweet_id,' .
             'profile_image_url,protected,public_metrics,url,username,verified,verified_type,withheld' .
             '&tweet.fields=attachments,author_id,context_annotations,conversation_id,created_at,edit_controls,' .
             'edit_history_tweet_ids,entities,geo,id,in_reply_to_user_id,lang,non_public_metrics,note_tweet,' .
