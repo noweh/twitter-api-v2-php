@@ -62,6 +62,9 @@ abstract class AbstractController
     /** @var array<string> $post_body */
     protected array $post_body = [];
 
+    /** @var array $guzzle_config */
+    protected array $guzzle_config = [];
+
     /**
      * Creates object. Requires an array of settings.
      * @param array<string> $settings
@@ -90,7 +93,7 @@ abstract class AbstractController
 
             if ($this->auth_mode === 0) { // Bearer Token
                 // Inject the Bearer token header
-                $client = new Client(['base_uri' => self::API_BASE_URI]);
+                $client = new Client(array_merge($this->guzzle_config, ['base_uri' => self::API_BASE_URI]));
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
             } elseif ($this->auth_mode === 1) { // OAuth 1.0a User Context
                 // Insert Oauth1 middleware
@@ -102,11 +105,11 @@ abstract class AbstractController
                     'token_secret' => $this->access_token_secret,
                 ]);
                 $stack->push($middleware);
-                $client = new Client([
+                $client = new Client(array_merge($this->guzzle_config, [
                     'base_uri' => self::API_BASE_URI,
                     'handler' => $stack,
                     'auth' => 'oauth'
-                ]);
+                ]));
             } else { // OAuth 2.0 Authorization Code Flow
                 throw new \RuntimeException('OAuth 2.0 Authorization Code Flow had not been implemented & also requires user interaction.');
             }
@@ -205,6 +208,7 @@ abstract class AbstractController
         $this->access_token = $settings['access_token'];
         $this->access_token_secret = $settings['access_token_secret'];
         $this->free_mode = $settings['free_mode'] ?? false;
+        $this->guzzle_config = $settings['guzzle_config'] ?? [];
     }
 
     /**

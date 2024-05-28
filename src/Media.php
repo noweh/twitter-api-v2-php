@@ -48,11 +48,11 @@ class Media extends AbstractController
             'token_secret' => $settings['access_token_secret'],
         ]);
         $stack->push($oAuth1);
-        $this->client = new Client([
+        $this->client = new Client(array_merge($this->guzzle_config, [
             'base_uri' => "https://upload.twitter.com/1.1/",
             'handler' => $stack,
             'auth' => 'oauth'
-        ]);
+        ]));
     }
 
     /**
