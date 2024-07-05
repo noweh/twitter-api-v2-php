@@ -47,6 +47,9 @@ abstract class AbstractController
     /** @var string */
     private string $bearer_token;
 
+    /** @var bool */
+    protected bool $free_mode = false;
+
     /** @var string|null $next_page_token Next Page Token for API pagination. */
     protected ?string $next_page_token = null;
 
@@ -145,7 +148,8 @@ abstract class AbstractController
         }
     }
 
-    private function is_windows(): bool {
+    private function is_windows(): bool
+    {
         return DIRECTORY_SEPARATOR === '\\';
     }
 
@@ -200,6 +204,7 @@ abstract class AbstractController
         $this->bearer_token = $settings['bearer_token'];
         $this->access_token = $settings['access_token'];
         $this->access_token_secret = $settings['access_token_secret'];
+        $this->free_mode = $settings['free_mode'] ?? false;
     }
 
     /**
