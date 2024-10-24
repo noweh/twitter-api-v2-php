@@ -90,16 +90,23 @@ Expected settings are as follows:
 ```php
 use Noweh\TwitterApi\Client;
 
-$settings['account_id']
-$settings['access_token'],
-$settings['access_token_secret'],
-$settings['consumer_key'],
-$settings['consumer_secret'],
-$settings['bearer_token'],
-$settings['free_mode'] = false; // Optional
+$settings = [
+    'account_id' => 'YOUR_ACCOUNT_ID',
+    'access_token' => 'YOUR_ACCESS_TOKEN',
+    'access_token_secret' => 'YOUR_TOKEN_SECRET',
+    'consumer_key' => 'YOUR_CONSUMER_KEY',
+    'consumer_secret' => 'YOUR_CONSUMER_SECRET',
+    'bearer_token' => 'YOUR_BEARER_TOKEN',
+    'free_mode' => false, // Optional
+    'api_base_uri' => 'https://api.twitter.com/2/', // Optional
+]; 
 
 $client = new Client($settings);
 ```
+
+By changing the value of `'api_base_uri'` you can have the requests target a different server, for instance, a simulated one, thus making testing your application in isolation easier.
+
+For a quick mock server setup you can use [mockoon](https://mockoon.com/).
 
 ### API Functionality
 All API calls are triggered when the `performRequest()` method is invoked.
