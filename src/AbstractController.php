@@ -62,6 +62,9 @@ abstract class AbstractController
     /** @var array<string> $post_body */
     protected array $post_body = [];
 
+    /** @var string> $baseUri */
+    private string $api_base_uri;
+
     /**
      * Creates object. Requires an array of settings.
      * @param array<string> $settings
@@ -73,6 +76,12 @@ abstract class AbstractController
         $this->extensionLoaded('json');
         $this->parseSettings($settings);
     }
+
+    private function getAPIBaseURI(): string
+    {
+        return $this->api_base_uri;
+    }
+    
 
     /**
      * Perform the request to Twitter API
@@ -90,7 +99,7 @@ abstract class AbstractController
 
             if ($this->auth_mode === 0) { // Bearer Token
                 // Inject the Bearer token header
-                $client = new Client(['base_uri' => self::API_BASE_URI]);
+                $client = new Client(['base_uri' => $this->getAPIBaseURI()]);
                 $headers['Authorization'] = 'Bearer ' . $this->bearer_token;
             } elseif ($this->auth_mode === 1) { // OAuth 1.0a User Context
                 // Insert Oauth1 middleware
@@ -103,7 +112,7 @@ abstract class AbstractController
                 ]);
                 $stack->push($middleware);
                 $client = new Client([
-                    'base_uri' => self::API_BASE_URI,
+                    'base_uri' => $this->getAPIBaseURI(),
                     'handler' => $stack,
                     'auth' => 'oauth'
                 ]);
@@ -205,6 +214,7 @@ abstract class AbstractController
         $this->access_token = $settings['access_token'];
         $this->access_token_secret = $settings['access_token_secret'];
         $this->free_mode = $settings['free_mode'] ?? false;
+        $this->api_base_uri = $settings['api_base_uri'] ?? self::API_BASE_URI;
     }
 
     /**
