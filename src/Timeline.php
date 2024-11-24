@@ -61,6 +61,7 @@ class Timeline extends AbstractController
             $this->query_string['pagination_token'] = $this->next_page_token;
             $endpoint .= '?' . http_build_query($this->query_string);
         }
+        $endpoint .= '?tweet.fields=article,attachments,author_id,card_uri,community_id,conversation_id,created_at,display_text_range,edit_controls,edit_history_tweet_ids,entities,id,lang,media_metadata,note_tweet,possibly_sensitive,public_metrics,reply_settings,scopes,source,text,withheld&expansions=article.cover_media,article.media_entities,attachments.media_keys,attachments.media_source_tweet,author_id,edit_history_tweet_ids&media.fields=alt_text,duration_ms,height,media_key,preview_image_url,public_metrics,type,url,variants,width&user.fields=affiliation,connection_status,created_at,description,entities,id,location,most_recent_tweet_id,name,pinned_tweet_id,profile_banner_url,profile_image_url,protected,public_metrics,receives_your_dm,subscription_type,url,username,verified,verified_type,withheld&place.fields=contained_within,country,country_code,full_name,id,name,place_type';
         return $endpoint;
     }
 }
