@@ -2,6 +2,8 @@
 namespace Noweh\TwitterApi;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
 use GuzzleHttp\HandlerStack;
@@ -86,10 +88,10 @@ abstract class AbstractController
     /**
      * Perform the request to Twitter API
      * @param array<string, mixed> $postData
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException|\RuntimeException|\JsonException
+     * @return \stdClass|null
+     * @throws GuzzleException|\RuntimeException|\JsonException
      */
-    public function performRequest(array $postData = [], $withHeaders = false)
+    public function performRequest(array $postData = [], bool $withHeaders = false): ?\stdClass
     {
         try {
             $headers = [
@@ -128,9 +130,10 @@ abstract class AbstractController
                 'json' => count($postData) ? $postData : null,
             ]);
 
+            /** @var \stdClass|null $body */
             $body = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
 
-            if ($withHeaders) {
+            if ($withHeaders && $body) {
                 $body->headers = $response->getHeaders();
             }
 
@@ -148,12 +151,11 @@ abstract class AbstractController
             return $body;
 
         } catch (ServerException $e) {
-            /** @var \stdClass $payload */
-            $payload = json_decode(str_replace("\n", "", $e->getResponse()->getBody()->getContents()), false, 512,
-                JSON_THROW_ON_ERROR);
-            throw new \RuntimeException($payload->detail, $payload->status);
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            throw new \RuntimeException($e->getResponse()->getBody()->getContents(), $e->getCode());
+            /** @var \stdClass|null $payload */
+            $payload = json_decode($e->getResponse()->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
+            throw new \RuntimeException($payload->detail ?? $e->getMessage(), $payload->status ?? $e->getCode());
+        } catch (RequestException $e) {
+            throw new \RuntimeException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -213,7 +215,7 @@ abstract class AbstractController
         $this->bearer_token = $settings['bearer_token'];
         $this->access_token = $settings['access_token'];
         $this->access_token_secret = $settings['access_token_secret'];
-        $this->free_mode = $settings['free_mode'] ?? false;
+        $this->free_mode = (bool) ($settings['free_mode'] ?? false);
         $this->api_base_uri = $settings['api_base_uri'] ?? self::API_BASE_URI;
     }
 
