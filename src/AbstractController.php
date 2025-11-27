@@ -155,7 +155,7 @@ abstract class AbstractController
             $payload = json_decode($e->getResponse()->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
             throw new \RuntimeException($payload->detail ?? $e->getMessage(), $payload->status ?? $e->getCode());
         } catch (RequestException $e) {
-            throw new \RuntimeException($e->getMessage(), $e->getCode());
+            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
